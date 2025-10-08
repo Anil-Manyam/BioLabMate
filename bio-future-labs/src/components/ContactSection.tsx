@@ -16,21 +16,45 @@ const ContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    toast({
-      title: "Message sent successfully!",
-      description: "Thank you for your interest. We'll get back to you soon.",
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  
+  // API Base URL from environment variables
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+  
+  try {
+    const response = await fetch(`${API_BASE}/contact`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
     });
-
-    setFormData({ name: '', email: '', message: '' });
+    
+    if (response.ok) {
+      const result = await response.json();
+      toast({
+        title: "Message sent successfully!",
+        description: "Thank you for your interest. We'll get back to you soon.",
+      });
+      setFormData({ name: '', email: '', message: '' });
+      console.log('Contact form submitted successfully:', result);
+    } else {
+      const error = await response.json();
+      throw new Error(error.detail || 'Failed to send message');
+    }
+  } catch (error) {
+    console.error('Contact form error:', error);
+    toast({
+      title: "Error sending message",
+      description: "Failed to send message. Please try again or contact us directly.",
+      variant: "destructive",
+    });
+  } finally {
     setIsSubmitting(false);
-  };
+  }
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
