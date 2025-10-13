@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Calculator } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
+import CircularJourneyCarousel from '../components/CircularJourneyCarousel';
 const Index = () => {
   const navigate = useNavigate();
 
@@ -16,10 +16,13 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <HeroSection />
-      <CircularJourneyTimeline />
+      <section className="py-0">
+        {/* <CircularJourneyTimeline /> */}
+        <CircularJourneyCarousel />
+      </section>
       
       {/* Sustainability Calculator Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-green-50">
+      {/* <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-green-50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
             Calculate Your Lab's Environmental Impact
@@ -37,7 +40,7 @@ const Index = () => {
           </Button>
         </div>
       </section>
-      
+       */}
       <TeamSection />
       <IncubatorPrograms />
       <ContactSection />

@@ -4,6 +4,7 @@ import Sanjay from '@/assets/Sanjay.jpg';
 import Sarika from '@/assets/Sarika.jpg';
 import Gordon from '@/assets/Gordon.jpg';
 import Vaibhav from '@/assets/Vaibhav.jpg';
+import Anil from '@/assets/Anil.jpg';
 import TeamBackground from '@/assets/Team_background.jpg';
 import { useEffect, useState, useRef } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '@/components/ui/carousel';
@@ -35,6 +36,14 @@ const TeamSection = () => {
       email: ' biolabmatecomposite@gmail.com'
     },
     {
+      name: 'Anil Manyam',
+      role: 'Software Developer (Intern)',
+      bio: 'Software Developer at BioLabMate, contributing to the design and development of dynamic web applications and digital platforms that enhance user experience and performance',
+      image: Anil,
+      linkedin: 'https://www.linkedin.com/in/anil-manyam-698662248/',
+      email: ' anilmanyam.630@gmail.com'
+    },
+    {
       name: 'Vaibhav Thummar',
       role: 'Software Engineer(Intern)',
       bio: 'Software Developer at BioLabMate, creating impactful websites and software solutions while managing web content and digital development.',
@@ -42,7 +51,6 @@ const TeamSection = () => {
       linkedin: 'https://www.linkedin.com/in/vaibhav-thummar-951498249/',
       email: ' vaibhav.it178@gmail.com'
     }
-    
   ];
 
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);

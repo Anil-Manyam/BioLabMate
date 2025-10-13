@@ -216,6 +216,37 @@
 // export default ContactSection;
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -602,3 +633,337 @@ const ContactSection = () => {
 };
 
 export default ContactSection;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState } from 'react';
+// import { motion } from 'framer-motion';
+// import { Send, MapPin, Phone, Mail, Clock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+// import emailjs from '@emailjs/browser';
+
+// // Import the new animation components
+// import { LayeredContactSection } from './StickyLayeredSection';
+// import ParallaxSection from './ParallaxSection';
+// import ScaleTransition from './ScaleTransition';
+
+// export default function ContactSection() {
+//   const [formData, setFormData] = useState({
+//     from_name: '',
+//     from_email: '',
+//     from_company: '',
+//     message: ''
+//   });
+  
+//   const [status, setStatus] = useState({
+//     type: '',
+//     message: ''
+//   });
+  
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+//     setFormData({
+//       ...formData,
+//       [e.target.name]: e.target.value
+//     });
+//   };
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setIsSubmitting(true);
+//     setStatus({ type: '', message: '' });
+
+//     try {
+//       // EmailJS Configuration
+//       const SERVICE_ID = 'YOUR_SERVICE_ID';
+//       const TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+//       const PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+
+//       await emailjs.send(
+//         SERVICE_ID,
+//         TEMPLATE_ID,
+//         {
+//           from_name: formData.from_name,
+//           from_email: formData.from_email,
+//           from_company: formData.from_company,
+//           message: formData.message,
+//           to_name: 'BioLabMate Team',
+//         },
+//         PUBLIC_KEY
+//       );
+
+//       setStatus({
+//         type: 'success',
+//         message: 'Thank you for your message! We\'ll get back to you within 24 hours.'
+//       });
+      
+//       setFormData({
+//         from_name: '',
+//         from_email: '',
+//         from_company: '',
+//         message: ''
+//       });
+      
+//     } catch (error) {
+//       setStatus({
+//         type: 'error',
+//         message: 'Something went wrong. Please try again or contact us directly.'
+//       });
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   return (
+//     <LayeredContactSection className="min-h-screen">
+//       {/* Background Elements */}
+//       <div className="absolute inset-0 overflow-hidden">
+//         <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+//         <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-indigo-500/10 to-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+//       </div>
+
+//       {/* Main Contact Content */}
+//       <div className="relative z-10 py-20">
+//         <ParallaxSection speed={0.7} fadeEffect={true}>
+//           <div className="max-w-7xl mx-auto px-4">
+//             {/* Header */}
+//             <ScaleTransition scaleRange={[0.9, 1.1]} className="text-center mb-16">
+//               <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+//                 Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">Touch</span>
+//               </h1>
+//               <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+//                 Ready to transform your biotechnology processes? Let's discuss how BioLabMate can help you achieve sustainable innovation.
+//               </p>
+//             </ScaleTransition>
+
+//             {/* Contact Form and Information */}
+//             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+//               {/* Contact Form */}
+//               <ScaleTransition scaleRange={[0.95, 1.05]}>
+//                 <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-8 border border-slate-700/50">
+//                   <h2 className="text-2xl font-bold text-white mb-6">Send us a message</h2>
+                  
+//                   <form onSubmit={handleSubmit} className="space-y-6">
+//                     {/* Name Field */}
+//                     <div>
+//                       <label htmlFor="from_name" className="block text-sm font-medium text-gray-300 mb-2">
+//                         Full Name *
+//                       </label>
+//                       <input
+//                         type="text"
+//                         id="from_name"
+//                         name="from_name"
+//                         value={formData.from_name}
+//                         onChange={handleChange}
+//                         required
+//                         className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+//                         placeholder="Your full name"
+//                       />
+//                     </div>
+
+//                     {/* Email Field */}
+//                     <div>
+//                       <label htmlFor="from_email" className="block text-sm font-medium text-gray-300 mb-2">
+//                         Email Address *
+//                       </label>
+//                       <input
+//                         type="email"
+//                         id="from_email"
+//                         name="from_email"
+//                         value={formData.from_email}
+//                         onChange={handleChange}
+//                         required
+//                         className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+//                         placeholder="your.email@example.com"
+//                       />
+//                     </div>
+
+//                     {/* Company Field */}
+//                     <div>
+//                       <label htmlFor="from_company" className="block text-sm font-medium text-gray-300 mb-2">
+//                         Company/Organization
+//                       </label>
+//                       <input
+//                         type="text"
+//                         id="from_company"
+//                         name="from_company"
+//                         value={formData.from_company}
+//                         onChange={handleChange}
+//                         className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+//                         placeholder="Your company or organization"
+//                       />
+//                     </div>
+
+//                     {/* Message Field */}
+//                     <div>
+//                       <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+//                         Message *
+//                       </label>
+//                       <textarea
+//                         id="message"
+//                         name="message"
+//                         value={formData.message}
+//                         onChange={handleChange}
+//                         required
+//                         rows={5}
+//                         className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 resize-none"
+//                         placeholder="Tell us about your project, questions, or how we can help you..."
+//                       />
+//                     </div>
+
+//                     {/* Status Messages */}
+//                     {status.message && (
+//                       <motion.div
+//                         initial={{ opacity: 0, y: 20 }}
+//                         animate={{ opacity: 1, y: 0 }}
+//                         className={`flex items-center space-x-2 p-4 rounded-lg ${
+//                           status.type === 'success' 
+//                             ? 'bg-green-900/50 border border-green-500/30' 
+//                             : 'bg-red-900/50 border border-red-500/30'
+//                         }`}
+//                       >
+//                         {status.type === 'success' ? (
+//                           <CheckCircle className="text-green-400" size={20} />
+//                         ) : (
+//                           <AlertCircle className="text-red-400" size={20} />
+//                         )}
+//                         <p className={`text-sm ${
+//                           status.type === 'success' ? 'text-green-300' : 'text-red-300'
+//                         }`}>
+//                           {status.message}
+//                         </p>
+//                       </motion.div>
+//                     )}
+
+//                     {/* Submit Button */}
+//                     <button
+//                       type="submit"
+//                       disabled={isSubmitting}
+//                       className={`w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg transition-all duration-200 ${
+//                         isSubmitting 
+//                           ? 'opacity-70 cursor-not-allowed' 
+//                           : 'hover:shadow-lg hover:shadow-blue-500/25 hover:scale-[1.02]'
+//                       }`}
+//                     >
+//                       {isSubmitting ? (
+//                         <>
+//                           <Loader2 className="animate-spin" size={20} />
+//                           <span>Sending...</span>
+//                         </>
+//                       ) : (
+//                         <>
+//                           <Send size={20} />
+//                           <span>Send Message</span>
+//                         </>
+//                       )}
+//                     </button>
+//                   </form>
+//                 </div>
+//               </ScaleTransition>
+
+//               {/* Contact Information */}
+//               <ParallaxSection speed={0.5} className="space-y-8">
+//                 <ScaleTransition scaleRange={[0.98, 1.02]}>
+//                   <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-8 border border-slate-700/50">
+//                     <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
+                    
+//                     <div className="space-y-6">
+//                       <div className="flex items-start space-x-4">
+//                         <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
+//                           <Mail className="text-blue-400" size={20} />
+//                         </div>
+//                         <div>
+//                           <h4 className="font-semibold text-white">Email</h4>
+//                           <p className="text-gray-300">info@biolabmate.com</p>
+//                         </div>
+//                       </div>
+                      
+//                       <div className="flex items-start space-x-4">
+//                         <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+//                           <Phone className="text-green-400" size={20} />
+//                         </div>
+//                         <div>
+//                           <h4 className="font-semibold text-white">Phone</h4>
+//                           <p className="text-gray-300">+1 (555) 123-4567</p>
+//                         </div>
+//                       </div>
+                      
+//                       <div className="flex items-start space-x-4">
+//                         <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
+//                           <MapPin className="text-purple-400" size={20} />
+//                         </div>
+//                         <div>
+//                           <h4 className="font-semibold text-white">Location</h4>
+//                           <p className="text-gray-300">
+//                             123 Innovation Drive<br />
+//                             Sustainability Park<br />
+//                             Green City, GC 12345
+//                           </p>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </ScaleTransition>
+
+//                 {/* Office Hours */}
+//                 <ScaleTransition scaleRange={[0.98, 1.02]} triggerOffset={0.3}>
+//                   <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-8 border border-slate-700/50">
+//                     <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+//                       <Clock className="text-yellow-400 mr-3" size={24} />
+//                       Office Hours
+//                     </h3>
+                    
+//                     <div className="space-y-3 text-gray-300">
+//                       <div className="flex justify-between">
+//                         <span>Monday - Friday</span>
+//                         <span>9:00 AM - 6:00 PM</span>
+//                       </div>
+//                       <div className="flex justify-between">
+//                         <span>Saturday</span>
+//                         <span>10:00 AM - 4:00 PM</span>
+//                       </div>
+//                       <div className="flex justify-between">
+//                         <span>Sunday</span>
+//                         <span>Closed</span>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </ScaleTransition>
+
+//                 {/* Call to Action */}
+//                 <ScaleTransition scaleRange={[0.98, 1.02]} triggerOffset={0.4}>
+//                   <div className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 backdrop-blur-md rounded-2xl p-8 border border-blue-500/30">
+//                     <h3 className="text-xl font-bold text-white mb-4">Ready to join the sustainable revolution?</h3>
+//                     <p className="text-gray-300 mb-6">Let's discuss how we can work together to create innovative, eco-friendly solutions for your laboratory needs.</p>
+//                     <div className="text-sm text-blue-300">
+//                       <p><strong>Note:</strong> EmailJS Setup Required</p>
+//                       <p>Please update the EmailJS configuration with your actual Service ID, Template ID, and Public Key.</p>
+//                     </div>
+//                   </div>
+//                 </ScaleTransition>
+//               </ParallaxSection>
+//             </div>
+//           </div>
+//         </ParallaxSection>
+//       </div>
+
+//       {/* Floating Elements */}
+//       <div className="absolute inset-0 pointer-events-none">
+//         <div className="absolute top-1/4 left-10 w-2 h-2 bg-blue-400 rounded-full animate-ping" />
+//         <div className="absolute top-3/4 right-10 w-3 h-3 bg-purple-400 rounded-full animate-pulse" />
+//         <div className="absolute bottom-1/4 left-1/4 w-1 h-1 bg-green-400 rounded-full animate-ping" style={{ animationDelay: '1s' }} />
+//       </div>
+//     </LayeredContactSection>
+//   );
+// }
