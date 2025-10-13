@@ -192,6 +192,201 @@ export default CircularJourney;
 
 
 
+
+
+
+
+
+// // semi crcular journey
+// import { useState } from 'react';
+// import { journeyData } from '@/content/journeyData';
+// import { Trophy, Rocket, Globe, Landmark, ShieldCheck } from 'lucide-react';
+// import Journey1 from '@/assets/1.jpg';
+// import Journey2 from '@/assets/2.jpg';
+// import Journey3 from '@/assets/3.jpg';
+// import Journey4 from '@/assets/4.jpg';
+// import Journey5 from '@/assets/5.jpg';
+// import Journey6 from '@/assets/6.jpg';
+
+// const iconMap: { [key: string]: any } = {
+//   Trophy,
+//   Rocket,
+//   Globe,
+//   Landmark,
+//   ShieldCheck,
+// };
+
+// // Flatten journey data into single array
+// const journeyItems = journeyData.flatMap((yearData, yearIndex) =>
+//   yearData.items.map((item, itemIndex) => ({
+//     ...item,
+//     id: `${yearData.year}-${itemIndex}`,
+//     year: yearData.year,
+//     index: yearIndex * yearData.items.length + itemIndex,
+//   }))
+// );
+
+// const journeyImages = [Journey1, Journey2, Journey3, Journey4, Journey5, Journey6];
+
+// const SemiCircleJourney = () => {
+//   const [activeIndex, setActiveIndex] = useState(0);
+//   const [rotation, setRotation] = useState(0);
+
+//   const handleNodeClick = (index: number) => {
+//     // Calculate rotation to bring clicked node to top (90 degrees in our coordinate system)
+//     const totalNodes = journeyItems.length;
+//     const anglePerNode = 180 / (totalNodes - 1); // 180 degrees for semi-circle
+//     const currentAngle = index * anglePerNode; // Current angle of clicked node
+//     const targetAngle = 90; // Top center position
+//     const rotationNeeded = currentAngle - targetAngle; // Reversed: current - target for correct direction
+    
+//     setRotation(rotationNeeded);
+//     setActiveIndex(index);
+//   };
+
+//   const getNodePosition = (index: number) => {
+//     const totalNodes = journeyItems.length;
+//     const anglePerNode = 180 / (totalNodes - 1);
+//     // Start from 0 degrees (right) to 180 degrees (left)
+//     const angle = (index * anglePerNode) * (Math.PI / 180);
+//     const radius = 650; // Larger radius to position nodes OUTSIDE the semi-circle
+    
+//     return {
+//       x: Math.cos(angle) * radius,
+//       y: -Math.sin(angle) * radius, // Negative y for upward positioning
+//     };
+//   };
+
+//   const activeItem = journeyItems[activeIndex];
+//   const IconComponent = iconMap[activeItem.icon || 'Trophy'];
+
+//   return (
+//     <section className="relative min-h-screen bg-gray-50 text-gray-900 py-20 overflow-hidden">
+//       {/* Background texture */}
+//       <div className="absolute inset-0 opacity-20">
+//         <div className="absolute inset-0 bg-gradient-to-b from-gray-100 via-gray-50 to-white" />
+//       </div>
+
+//       <div className="container mx-auto px-4 relative z-10">
+//         <h2 className="text-4xl md:text-5xl font-bold text-center mb-12">
+//           Our Journey
+//         </h2>
+
+//         {/* Semi-circle container */}
+//         <div className="relative w-full max-w-7xl mx-auto h-[800px] flex items-end justify-center">
+//           {/* Center content display - Large semi-circle */}
+//           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1100px]">
+//             {/* Large semi-circle with background image */}
+//             <div className="relative w-full aspect-[2/1] rounded-t-full overflow-hidden shadow-2xl border-4 border-gray-300">
+//               {/* Background image */}
+//               <div 
+//                 className="absolute inset-0 transition-opacity duration-700"
+//                 style={{
+//                   backgroundImage: `url(${journeyImages[activeIndex % journeyImages.length]})`,
+//                   backgroundSize: 'cover',
+//                   backgroundPosition: 'center',
+//                 }}
+//               >
+//                 {/* Dark overlay for readability */}
+//                 <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+//               </div>
+
+//               {/* Content overlay inside semi-circle */}
+//               <div className="absolute inset-0 flex flex-col items-center justify-center p-12 pt-20">
+//                 {/* Icon badge at top */}
+//                 <div className="mb-6 w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/50 border-4 border-white">
+//                   <IconComponent className="w-10 h-10 text-white" />
+//                 </div>
+
+//                 {/* Year badge */}
+//                 <div className="mb-6 px-8 py-3 bg-blue-600 rounded-full">
+//                   <span className="text-white font-bold text-lg">{activeItem.year}</span>
+//                 </div>
+
+//                 {/* Content text */}
+//                 <div className="text-center max-w-2xl">
+//                   <h3 className="text-2xl md:text-3xl font-bold mb-6 text-white leading-tight">
+//                     {activeItem.title}
+//                   </h3>
+//                   <p className="text-white text-base md:text-lg leading-relaxed">
+//                     {activeItem.description}
+//                   </p>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Rotating nodes container - Positioned OUTSIDE the semi-circle */}
+//           <div
+//             className="absolute bottom-0 left-1/2 w-[1300px] h-[650px] transition-transform duration-700 ease-out"
+//             style={{ 
+//               transform: `translateX(-50%) rotate(${rotation}deg)`,
+//               transformOrigin: '50% 100%'
+//             }}
+//           >
+//             {journeyItems.map((item, index) => {
+//               const pos = getNodePosition(index);
+//               const isActive = index === activeIndex;
+
+//               return (
+//                 <button
+//                   key={item.id}
+//                   onClick={() => handleNodeClick(index)}
+//                   className="absolute left-1/2 bottom-0 transition-all duration-300 group"
+//                   style={{
+//                     transform: `translate(-50%, 0) translate(${pos.x}px, ${pos.y}px) rotate(${-rotation}deg)`,
+//                   }}
+//                 >
+//                   {/* Node circle */}
+//                   <div
+//                     className={`relative w-12 h-12 rounded-full border-4 transition-all duration-300 ${
+//                       isActive
+//                         ? 'bg-blue-600 border-white shadow-lg shadow-blue-500/50 scale-150'
+//                         : 'bg-gray-800 border-gray-500 hover:border-white hover:scale-110'
+//                     }`}
+//                   >
+//                     {/* Pulse effect for active node */}
+//                     {isActive && (
+//                       <div className="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-50" />
+//                     )}
+//                   </div>
+
+//                   {/* Node label - positioned above the node */}
+//                   <div
+//                     className={`absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap text-sm font-medium transition-all duration-300 ${
+//                       isActive ? 'text-blue-600 scale-110 font-bold' : 'text-gray-600 group-hover:text-gray-900'
+//                     }`}
+//                   >
+//                     {String(index + 1).padStart(2, '0')}. Milestone
+//                   </div>
+//                 </button>
+//               );
+//             })}
+//           </div>
+
+//           {/* Arc line visualization for nodes path */}
+//           <svg
+//             className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1300px] h-[650px] pointer-events-none"
+//             style={{ transform: 'translateX(-50%)' }}
+//           >
+//             <path
+//               d="M 0 650 A 650 650 0 0 1 1300 650"
+//               fill="none"
+//               stroke="rgba(75, 85, 99, 0.2)"
+//               strokeWidth="3"
+//               strokeDasharray="8,8"
+//             />
+//           </svg>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default SemiCircleJourney;
+
+
+
 // import { useState } from 'react';
 // import { journeyData } from '@/content/journeyData';
 // import { Trophy, Rocket, Globe, Landmark, ShieldCheck } from 'lucide-react';
