@@ -91,7 +91,7 @@
 #         print("🔗 You can now test your API at: http://localhost:8000/api/blogs")
         
 #     except Exception as e:
-#         print(f"❌ Error transferring blogs: {e}")
+#         print(f" Error transferring blogs: {e}")
 #         print(f"🔍 Please check your MongoDB Atlas connection and credentials")
 #     finally:
 #         client.close()

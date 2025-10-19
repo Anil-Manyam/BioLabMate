@@ -301,19 +301,19 @@ const ContactSection = () => {
         EMAILJS_CONFIG.PUBLIC_KEY
       );
 
-      console.log('✅ Email sent successfully:', result);
+      console.log('Email sent successfully:', result);
       return { success: true, result };
     } catch (error) {
-      console.error('❌ EmailJS failed:', error);
+      console.error(' EmailJS failed:', error);
       return { success: false, error };
     }
   };
 
   const saveToBackend = async () => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     
     try {
-      const response = await fetch(`${API_BASE}/contact`, {
+      const response = await fetch(`${API_BASE}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -322,14 +322,14 @@ const ContactSection = () => {
       });
 
       if (response.ok) {
-        console.log('✅ Saved to database');
+        console.log(' Saved to database');
         return { success: true };
       } else {
-        console.warn('⚠️ Backend save failed');
+        console.warn(' Backend save failed');
         return { success: false };
       }
     } catch (error) {
-      console.error('❌ Backend error:', error);
+      console.error(' Backend error:', error);
       return { success: false };
     }
   };
@@ -340,7 +340,7 @@ const ContactSection = () => {
     setFeedback({ message: '', type: 'info', show: false });
 
     try {
-      console.log('📤 Submitting contact form...');
+      console.log(' Submitting contact form...');
 
       // Validate form
       if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
@@ -371,21 +371,21 @@ const ContactSection = () => {
         });
       } else if (emailResult.success) {
         toast({
-          title: "Message sent! ✅",
+          title: "Message sent! ",
           description: "Thank you for your interest. We'll get back to you soon.",
         });
         setFeedback({
-          message: '✅ Great! Your message has been sent successfully.',
+          message: ' Great! Your message has been sent successfully.',
           type: 'success',
           show: true
         });
       } else if (dbResult.success) {
         toast({
-          title: "Message received! 📝",
+          title: "Message received! ",
           description: "Your message has been saved. We'll get back to you soon.",
         });
         setFeedback({
-          message: '📝 Your message has been received and saved.',
+          message: ' Your message has been received and saved.',
           type: 'success',
           show: true
         });
@@ -396,7 +396,7 @@ const ContactSection = () => {
           variant: "destructive",
         });
         setFeedback({
-          message: '⚠️ There was an issue sending your message. Please try again or contact us directly.',
+          message: ' There was an issue sending your message. Please try again or contact us directly.',
           type: 'error',
           show: true
         });
@@ -413,7 +413,7 @@ const ContactSection = () => {
       }
 
     } catch (error) {
-      console.error('❌ Submission error:', error);
+      console.error(' Submission error:', error);
       toast({
         title: "Unexpected error",
         description: "Sorry, there was an unexpected error. Please try again.",

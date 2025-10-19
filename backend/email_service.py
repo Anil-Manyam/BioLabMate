@@ -143,7 +143,7 @@
 # #         return True
         
 # #     except Exception as e:
-# #         logger.error(f"❌ Email failed: {str(e)}")
+# #         logger.error(f" Email failed: {str(e)}")
 # #         return False
 
 # # # Async wrapper for FastAPI

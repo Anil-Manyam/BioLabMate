@@ -37,7 +37,7 @@
 #             print(f"   LinkedIn: {sample_blog.get('linkedin_link')}")
         
 #     except Exception as e:
-#         print(f"❌ Error updating blogs: {e}")
+#         print(f" Error updating blogs: {e}")
 #     finally:
 #         client.close()
 
