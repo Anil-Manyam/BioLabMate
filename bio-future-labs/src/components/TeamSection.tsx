@@ -1216,7 +1216,7 @@ const TeamSection = () => {
 
         <Carousel
           className="max-w-6xl mx-auto px-2 cursor-pointer"
-          opts={{ align: 'center', loop: true, duration: 20 }} // ✅ loop enabled
+          opts={{ align: 'center', loop: true, duration: 20 }} //   loop enabled
           setApi={setCarouselApi}
         >
           <CarouselContent>

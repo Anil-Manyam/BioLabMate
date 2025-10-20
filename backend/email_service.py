@@ -139,7 +139,7 @@
 # #             server.login(config.MAIL_USERNAME, config.MAIL_PASSWORD)
 # #             server.sendmail(config.MAIL_FROM, config.CONTACT_EMAIL, msg.as_string())
         
-# #         logger.info(f"✅ Email sent successfully from {email}")
+# #         logger.info(f"  Email sent successfully from {email}")
 # #         return True
         
 # #     except Exception as e:

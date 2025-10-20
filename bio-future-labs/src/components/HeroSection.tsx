@@ -338,7 +338,7 @@
 //     lastPos.current = null;
 //   };
 
-//   // ✅ Calculate how much of the overlay has been erased
+//   //   Calculate how much of the overlay has been erased
 //   const checkScratchProgress = () => {
 //     const canvas = canvasRef.current;
 //     if (!canvas || !ctx || hasClearedNav) return;
@@ -359,7 +359,7 @@
 //     }
 //   };
 
-//   // ✅ Smooth fade out effect only under the navigation bar area
+//   //   Smooth fade out effect only under the navigation bar area
 //   const clearNavigationBarArea = () => {
 //     const canvas = canvasRef.current;
 //     if (!canvas || !ctx) return;
@@ -571,7 +571,7 @@
 //     lastPos.current = null;
 //   };
 
-//   // ✅ Check scratch progress and auto-clear at 80%
+//   //   Check scratch progress and auto-clear at 80%
 //   const checkScratchProgress = () => {
 //     const canvas = canvasRef.current;
 //     if (!canvas || !ctx || hasClearedAll) return;
@@ -592,7 +592,7 @@
 //     }
 //   };
 
-//   // ✅ Smoothly fade out entire overlay when 80% scratched
+//   //   Smoothly fade out entire overlay when 80% scratched
 //   const fadeOutOverlay = () => {
 //     const canvas = canvasRef.current;
 //     if (!canvas) return;
@@ -709,7 +709,7 @@ const HeroSection = () => {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasClearedAll, setHasClearedAll] = useState(false);
-  const [cursorSize] = useState(65); // ✅ size of hover scratch
+  const [cursorSize] = useState(65); //   size of hover scratch
   const [isScratching, setIsScratching] = useState(false);
   const lastPos = useRef<{ x: number; y: number } | null>(null);
 
@@ -788,7 +788,7 @@ const HeroSection = () => {
 
     setCursorPos({ x, y });
 
-    // ✅ Always scratch — hover or click both use same size
+    //   Always scratch — hover or click both use same size
     handleScratch(x, y);
   };
 
@@ -1071,7 +1071,7 @@ export default HeroSection;
 //         src="/background.mp4"
 //       />
 
-//       {/* ✅ Glassy Text Only */}
+//       {/*   Glassy Text Only */}
 //       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 animate-fade-in">
 //         <div className="max-w-5xl mx-auto">
 //           <h1

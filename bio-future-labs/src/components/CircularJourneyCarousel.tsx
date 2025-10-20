@@ -803,10 +803,10 @@ export default CircularJourneyFromDB;
 // import { journeyData } from '@/content/journeyData';
 // import { Trophy, Rocket, Globe, Landmark, ShieldCheck } from 'lucide-react';
 
-// // ✅ Background image for the section
+// //   Background image for the section
 // import JourneyBg from '@/assets/1.jpg';
 
-// // ✅ Journey images
+// //   Journey images
 // import Journey1 from '@/assets/1.jpg';
 // import Journey2 from '@/assets/2.jpg';
 // import Journey3 from '@/assets/3.jpg';

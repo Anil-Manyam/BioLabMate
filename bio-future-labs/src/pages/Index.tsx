@@ -144,7 +144,7 @@
 // import { useEffect } from 'react';
 
 // /**
-//  * ✅ Reusable AnimatedSection component
+//  *   Reusable AnimatedSection component
 //  * Adds smooth fade/slide transition when a section enters/leaves the viewport.
 //  */
 // const AnimatedSection = ({ children }: { children: React.ReactNode }) => {
@@ -189,7 +189,7 @@
 //     <div className="min-h-screen bg-background overflow-x-hidden">
 //       <Navigation />
 
-//       {/* ✅ Each section wrapped in AnimatedSection */}
+//       {/*   Each section wrapped in AnimatedSection */}
 //       <AnimatedSection>
 //         <HeroSection />
 //       </AnimatedSection>

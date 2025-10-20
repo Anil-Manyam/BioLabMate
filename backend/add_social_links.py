@@ -16,7 +16,7 @@
 #     try:
 #         print("🔄 Connecting to MongoDB Atlas...")
 #         await client.admin.command('ping')
-#         print("✅ Connected to MongoDB Atlas!")
+#         print("  Connected to MongoDB Atlas!")
         
 #         # Update all existing blogs to add social media links
 #         result = await database.blogs.update_many(
@@ -27,7 +27,7 @@
 #             }}
 #         )
         
-#         print(f"✅ Updated {result.modified_count} blogs with social media links!")
+#         print(f"  Updated {result.modified_count} blogs with social media links!")
         
 #         # Verify the update
 #         sample_blog = await database.blogs.find_one()

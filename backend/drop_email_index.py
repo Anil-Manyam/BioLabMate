@@ -17,7 +17,7 @@ async def drop_email_index():
         # Drop the email unique index
         if 'email_1' in indexes:
             await db.team_members.drop_index('email_1')
-            print("✅ Dropped email_1 unique index")
+            print("  Dropped email_1 unique index")
         else:
             print("⚠️ email_1 index not found")
         

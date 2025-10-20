@@ -66,8 +66,8 @@
 #         "description": blog["description"],
 #         "date": blog["date"],
 #         "picture": blog.get("picture"),
-#         "twitter_link": blog.get("twitter_link"),      # ✅ ADD this
-#         "linkedin_link": blog.get("linkedin_link"),    # ✅ ADD this
+#         "twitter_link": blog.get("twitter_link"),      #   ADD this
+#         "linkedin_link": blog.get("linkedin_link"),    #   ADD this
 #         "created_at": blog["created_at"].isoformat()
 #     }
 
@@ -205,7 +205,7 @@
 #         contact_dict["submitted_at"] = datetime.now()
         
 #         await database.contacts.insert_one(contact_dict)
-#         logger.info("✅ Contact form saved to database")
+#         logger.info("  Contact form saved to database")
         
 #         return {
 #             "message": "Thank you! Your message has been received successfully.",
@@ -553,6 +553,7 @@
 
 
 
+
 # Fixed backend app.py - Corrects the milestone helper and admin auth issues
 from fastapi import FastAPI, HTTPException, Depends, status, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -580,24 +581,56 @@ class UserRole(str, Enum):
     SUPER_ADMIN = "super_admin"
 
 # Blog models
+# class BlogPostCreate(BaseModel):
+#     title: str
+#     description: str
+#     picture: Optional[str] = None
+#     twitter_link: Optional[str] = "https://x.com/biolabmate"
+#     linkedin_link: Optional[str] = "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
+
+# class BlogPostUpdate(BaseModel):
+#     title: Optional[str] = None
+#     description: Optional[str] = None
+#     picture: Optional[str] = None
+#     twitter_link: Optional[str] = None
+#     linkedin_link: Optional[str] = None
+
+# class BlogPostResponse(BaseModel):
+#     id: str
+#     title: str
+#     description: str
+#     date: str
+#     picture: Optional[str] = None
+#     twitter_link: Optional[str] = None
+#     linkedin_link: Optional[str] = None
+#     created_at: str
+#     author_id: Optional[str] = None
+#     author_name: Optional[str] = None
+
+
 class BlogPostCreate(BaseModel):
     title: str
     description: str
+    category: str = "Pollution"  #   ADDED WITH DEFAULT
     picture: Optional[str] = None
     twitter_link: Optional[str] = "https://x.com/biolabmate"
     linkedin_link: Optional[str] = "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
 
+
 class BlogPostUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    category: Optional[str] = None  #   ADDED
     picture: Optional[str] = None
     twitter_link: Optional[str] = None
     linkedin_link: Optional[str] = None
+
 
 class BlogPostResponse(BaseModel):
     id: str
     title: str
     description: str
+    category: str  #   ADDED
     date: str
     picture: Optional[str] = None
     twitter_link: Optional[str] = None
@@ -897,7 +930,7 @@ async def lifespan(app: FastAPI):
             indexes = await database.team_members.index_information()
             if 'email_1' in indexes:
                 await database.team_members.drop_index('email_1')
-                logger.info("✅ Dropped email_1 unique index to allow duplicate emails")
+                logger.info("  Dropped email_1 unique index to allow duplicate emails")
         except Exception as e:
             logger.warning(f"Email index drop warning: {e}")
         
@@ -907,7 +940,7 @@ async def lifespan(app: FastAPI):
             await database.users.create_index("email", unique=True)
             await database.milestones.create_index("year")
             await database.milestones.create_index("order_index")
-            logger.info("Created necessary indexes")
+            logger.info("  Created necessary indexes")
         except Exception as e:
             logger.warning(f"Index creation warning (may already exist): {e}")
         
@@ -940,12 +973,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# UPDATED: Helper functions
+# # UPDATED: Helper functions
+# def blog_helper(blog) -> dict:
+#     return {
+#         "id": str(blog["_id"]),
+#         "title": blog["title"],
+#         "description": blog["description"],
+#         "date": blog["date"],
+#         "picture": blog.get("picture"),
+#         "twitter_link": blog.get("twitter_link"),
+#         "linkedin_link": blog.get("linkedin_link"),
+#         "created_at": blog["created_at"].isoformat(),
+#         "author_id": blog.get("author_id"),
+#         "author_name": blog.get("author_name")
+#     }
+
 def blog_helper(blog) -> dict:
     return {
         "id": str(blog["_id"]),
         "title": blog["title"],
         "description": blog["description"],
+        "category": blog.get("category", "Pollution"),  # NEW: Add category with default
         "date": blog["date"],
         "picture": blog.get("picture"),
         "twitter_link": blog.get("twitter_link"),
@@ -1132,13 +1180,33 @@ async def api_api_milestones():
     """Frontend compatibility - fix double API prefix"""
     return await get_milestones()
 
+# @app.get("/api/blogs")
+# async def get_all_blogs():
+#     try:
+#         blogs = []
+#         collection_names = await database.list_collection_names()
+#         if "blogs" in collection_names:
+#             async for blog in database.blogs.find().sort("created_at", -1):
+#                 blogs.append(blog_helper(blog))
+#         return blogs
+#     except Exception as e:
+#         logger.error(f"Error fetching blogs: {e}")
+#         return []
+
+
 @app.get("/api/blogs")
-async def get_all_blogs():
+async def get_all_blogs(category: Optional[str] = None):
+    """Get all blogs, optionally filtered by category"""
     try:
         blogs = []
         collection_names = await database.list_collection_names()
         if "blogs" in collection_names:
-            async for blog in database.blogs.find().sort("created_at", -1):
+            # Build query filter
+            query = {}
+            if category and category.lower() != "all":
+                query["category"] = category
+            
+            async for blog in database.blogs.find(query).sort("created_at", -1):
                 blogs.append(blog_helper(blog))
         return blogs
     except Exception as e:
@@ -1148,6 +1216,21 @@ async def get_all_blogs():
 @app.get("/blogs")
 async def get_all_blogs_alias():
     return await get_all_blogs()
+
+
+@app.get("/api/blogs/categories")
+async def get_blog_categories():
+    """Get all unique blog categories"""
+    try:
+        collection_names = await database.list_collection_names()
+        if "blogs" in collection_names:
+            categories = await database.blogs.distinct("category")
+            return {"categories": sorted(categories)}
+        return {"categories": []}
+    except Exception as e:
+        logger.error(f"Error fetching categories: {e}")
+        return {"categories": []}
+
 
 @app.post("/api/contact")
 async def submit_contact_form(contact_data: ContactForm):
@@ -1160,7 +1243,7 @@ async def submit_contact_form(contact_data: ContactForm):
         contact_dict["is_read"] = False
         
         await database.contacts.insert_one(contact_dict)
-        logger.info("✅ Contact form saved to database")
+        logger.info("  Contact form saved to database")
         
         return {
             "message": "Thank you! Your message has been received successfully.",
@@ -1244,18 +1327,45 @@ async def get_admin_blogs(
         logger.error(f"Error fetching admin blogs: {e}")
         return []
 
+# @app.post("/admin/blogs")
+# async def create_blog(
+#     blog_data: BlogPostCreate,
+#     current_user: dict = Depends(get_current_admin)
+# ):
+#     """Create a new blog post - FIXED"""
+#     try:
+#         blog_dict = blog_data.dict()
+#         blog_dict["date"] = datetime.now().strftime("%Y-%m-%d")
+#         blog_dict["created_at"] = datetime.now()
+#         blog_dict["author_id"] = current_user.get("user_id", "admin")
+#         blog_dict["author_name"] = current_user.get("sub", "admin")  # FIXED: use 'sub' instead of 'username'
+        
+#         result = await database.blogs.insert_one(blog_dict)
+#         new_blog = await database.blogs.find_one({"_id": result.inserted_id})
+        
+#         return blog_helper(new_blog)
+#     except Exception as e:
+#         logger.error(f"Error creating blog: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to create blog: {str(e)}")
+
+
+
 @app.post("/admin/blogs")
 async def create_blog(
     blog_data: BlogPostCreate,
     current_user: dict = Depends(get_current_admin)
 ):
-    """Create a new blog post - FIXED"""
+    """Create a new blog post - UPDATED with category"""
     try:
         blog_dict = blog_data.dict()
         blog_dict["date"] = datetime.now().strftime("%Y-%m-%d")
         blog_dict["created_at"] = datetime.now()
         blog_dict["author_id"] = current_user.get("user_id", "admin")
-        blog_dict["author_name"] = current_user.get("sub", "admin")  # FIXED: use 'sub' instead of 'username'
+        blog_dict["author_name"] = current_user.get("sub", "admin")
+        
+        # Ensure category exists (default to "pollution" if not provided)
+        if "category" not in blog_dict or not blog_dict["category"]:
+            blog_dict["category"] = "Pollution"
         
         result = await database.blogs.insert_one(blog_dict)
         new_blog = await database.blogs.find_one({"_id": result.inserted_id})
@@ -1770,15 +1880,15 @@ async def root():
         "version": "2.0.0",
         "admin_panel": "/admin",
         "api_docs": "/docs",
-        "status": " All issues FIXED - Password, Auth, Milestones!"
+        "status": "  All issues FIXED - Password, Auth, Milestones!"
     }
 
 # Run application
 if __name__ == "__main__":
     import uvicorn
-    print(f" Admin Panel: http://localhost:8080/admin")
-    print(f" API Docs: http://localhost:{config.API_PORT}/docs") 
-    print(f" Default Login: admin / BioLabMate")
+    print(f"Admin Panel: http://localhost:8080/admin")
+    print(f"API Docs: http://localhost:{config.API_PORT}/docs") 
+    print(f"Default Login: admin / BioLabMate")
     
     uvicorn.run(
         "app:app",

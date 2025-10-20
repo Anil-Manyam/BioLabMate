@@ -265,7 +265,7 @@
 //             <Card>
 //               <CardContent className="p-4">
 //                 <div className="text-center">
-//                   <h3 className="text-2xl font-bold text-green-600">✅</h3>
+//                   <h3 className="text-2xl font-bold text-green-600"> </h3>
 //                   <p className="text-gray-600">MongoDB Connected</p>
 //                 </div>
 //               </CardContent>
@@ -698,7 +698,7 @@
 // //             <Card>
 // //               <CardContent className="p-4">
 // //                 <div className="text-center">
-// //                   <h3 className="text-2xl font-bold text-green-600">✅</h3>
+// //                   <h3 className="text-2xl font-bold text-green-600"> </h3>
 // //                   <p className="text-gray-600">MongoDB Connected</p>
 // //                 </div>
 // //               </CardContent>
@@ -866,27 +866,498 @@
 
 
 
-// AdminBlogs.tsx - Enhanced blog management component (replaces BlogAdmin.tsx)
+// // just before adding catogery to blogs page
+// import React, { useEffect, useState } from "react";
+// import { 
+//   Plus, 
+//   Edit, 
+//   Trash2, 
+//   Calendar, 
+//   FileText, 
+//   Image, 
+//   ExternalLink,
+//   Search,
+//   Filter,
+//   Eye,
+//   Twitter,
+//   Linkedin
+// } from "lucide-react";
+
+// interface BlogPost {
+//   id: string;
+//   title: string;
+//   description: string;
+//   date: string;
+//   picture?: string;
+//   twitter_link?: string;
+//   linkedin_link?: string;
+//   created_at: string;
+//   author_id?: string;
+//   author_name?: string;
+// }
+
+// interface BlogForm {
+//   title: string;
+//   description: string;
+//   picture: string;
+//   twitter_link: string;
+//   linkedin_link: string;
+// }
+
+// const AdminBlogs: React.FC = () => {
+//   const [blogs, setBlogs] = useState<BlogPost[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [showModal, setShowModal] = useState(false);
+//   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [error, setError] = useState("");
+//   const [formData, setFormData] = useState<BlogForm>({
+//     title: "",
+//     description: "",
+//     picture: "",
+//     twitter_link: "https://x.com/biolabmate",
+//     linkedin_link: "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
+//   });
+
+//   useEffect(() => {
+//     fetchBlogs();
+//   }, []);
+
+//   const fetchBlogs = async () => {
+//     try {
+//       const token = localStorage.getItem('admin_token');
+//       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/blogs`, {
+//         headers: {
+//           'Authorization': `Bearer ${token}`,
+//         },
+//       });
+
+//       if (!response.ok) {
+//         throw new Error('Failed to fetch blogs');
+//       }
+
+//       const data = await response.json();
+//       setBlogs(data);
+//     } catch (error) {
+//       console.error('Error fetching blogs:', error);
+//       setError('Failed to load blogs');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+    
+//     try {
+//       const token = localStorage.getItem('admin_token');
+//       const url = editingBlog 
+//         ? `${import.meta.env.VITE_API_BASE_URL}/admin/blogs/${editingBlog.id}`
+//         : `${import.meta.env.VITE_API_BASE_URL}/admin/blogs`;
+      
+//       const method = editingBlog ? 'PUT' : 'POST';
+      
+//       const response = await fetch(url, {
+//         method,
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${token}`,
+//         },
+//         body: JSON.stringify(formData),
+//       });
+
+//       if (!response.ok) {
+//         const errorData = await response.json();
+//         throw new Error(errorData.detail || 'Failed to save blog post');
+//       }
+
+//       await fetchBlogs();
+//       setShowModal(false);
+//       resetForm();
+//     } catch (error) {
+//       console.error('Error saving blog:', error);
+//       setError(error instanceof Error ? error.message : 'Failed to save blog post');
+//     }
+//   };
+
+//   const handleDelete = async (id: string, title: string) => {
+//     if (!confirm(`Are you sure you want to delete the blog post "${title}"? This action cannot be undone.`)) {
+//       return;
+//     }
+
+//     try {
+//       const token = localStorage.getItem('admin_token');
+//       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/blogs/${id}`, {
+//         method: 'DELETE',
+//         headers: {
+//           'Authorization': `Bearer ${token}`,
+//         },
+//       });
+
+//       if (!response.ok) {
+//         throw new Error('Failed to delete blog post');
+//       }
+
+//       await fetchBlogs();
+//     } catch (error) {
+//       console.error('Error deleting blog:', error);
+//       alert('Failed to delete blog post');
+//     }
+//   };
+
+//   const handleEdit = (blog: BlogPost) => {
+//     setEditingBlog(blog);
+//     setFormData({
+//       title: blog.title,
+//       description: blog.description,
+//       picture: blog.picture || "",
+//       twitter_link: blog.twitter_link || "https://x.com/biolabmate",
+//       linkedin_link: blog.linkedin_link || "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
+//     });
+//     setError("");
+//     setShowModal(true);
+//   };
+
+//   const resetForm = () => {
+//     setFormData({
+//       title: "",
+//       description: "",
+//       picture: "",
+//       twitter_link: "https://x.com/biolabmate",
+//       linkedin_link: "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
+//     });
+//     setEditingBlog(null);
+//     setError("");
+//   };
+
+//   const filteredBlogs = blogs.filter(blog => 
+//     blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//     blog.description.toLowerCase().includes(searchTerm.toLowerCase())
+//   );
+
+//   if (loading) {
+//     return (
+//       <div className="flex items-center justify-center h-64">
+//         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="space-y-6">
+//       {/* Header */}
+//       <div className="flex justify-between items-center">
+//         <div>
+//           <h1 className="text-3xl font-bold text-gray-900">Blog Posts</h1>
+//           <p className="mt-2 text-gray-600">Create and manage your blog content</p>
+//         </div>
+//         <button
+//           onClick={() => {
+//             resetForm();
+//             setShowModal(true);
+//           }}
+//           className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark flex items-center space-x-2"
+//         >
+//           <Plus className="h-5 w-5" />
+//           <span>New Blog Post</span>
+//         </button>
+//       </div>
+
+//       {/* Error Alert */}
+//       {error && (
+//         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+//           <p className="text-red-700">{error}</p>
+//         </div>
+//       )}
+
+//       {/* Search */}
+//       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+//         <div className="relative">
+//           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+//           <input
+//             type="text"
+//             placeholder="Search blog posts..."
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+//           />
+//         </div>
+//       </div>
+
+//       {/* Blog Posts Grid */}
+//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+//         {filteredBlogs.map((blog) => (
+//           <div key={blog.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+//             {/* Blog Image */}
+//             {blog.picture && (
+//               <div className="h-48 overflow-hidden">
+//                 <img
+//                   src={blog.picture}
+//                   alt={blog.title}
+//                   className="w-full h-full object-cover"
+//                 />
+//               </div>
+//             )}
+            
+//             <div className="p-6">
+//               {/* Header */}
+//               <div className="flex items-start justify-between mb-4">
+//                 <div className="flex-1">
+//                   <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+//                     {blog.title}
+//                   </h3>
+//                   <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+//                     <div className="flex items-center">
+//                       <Calendar className="h-4 w-4 mr-1" />
+//                       <span>{new Date(blog.date).toLocaleDateString()}</span>
+//                     </div>
+//                     {blog.author_name && (
+//                       <div className="flex items-center">
+//                         <span>by {blog.author_name}</span>
+//                       </div>
+//                     )}
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* Description Preview */}
+//               <p className="text-gray-700 text-sm mb-4 line-clamp-3">
+//                 {blog.description}
+//               </p>
+
+//               {/* Social Links */}
+//               <div className="flex items-center space-x-2 mb-4">
+//                 {blog.twitter_link && (
+//                   <a
+//                     href={blog.twitter_link}
+//                     target="_blank"
+//                     rel="noopener noreferrer"
+//                     className="p-2 bg-sky-100 text-sky-600 rounded-lg hover:bg-sky-200"
+//                     title="Twitter"
+//                   >
+//                     <Twitter className="h-4 w-4" />
+//                   </a>
+//                 )}
+//                 {blog.linkedin_link && (
+//                   <a
+//                     href={blog.linkedin_link}
+//                     target="_blank"
+//                     rel="noopener noreferrer"
+//                     className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+//                     title="LinkedIn"
+//                   >
+//                     <Linkedin className="h-4 w-4" />
+//                   </a>
+//                 )}
+//               </div>
+
+//               {/* Actions */}
+//               <div className="flex items-center justify-between">
+//                 <div className="flex space-x-2">
+//                   <button
+//                     onClick={() => handleEdit(blog)}
+//                     className="flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"
+//                   >
+//                     <Edit className="h-4 w-4 mr-1" />
+//                     Edit
+//                   </button>
+//                   <button
+//                     onClick={() => handleDelete(blog.id, blog.title)}
+//                     className="flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100"
+//                   >
+//                     <Trash2 className="h-4 w-4 mr-1" />
+//                     Delete
+//                   </button>
+//                 </div>
+                
+//                 <a
+//                   href={`/blog`}
+//                   target="_blank"
+//                   rel="noopener noreferrer"
+//                   className="flex items-center text-sm text-gray-500 hover:text-gray-700"
+//                 >
+//                   <Eye className="h-4 w-4 mr-1" />
+//                   View Live
+//                 </a>
+//               </div>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {filteredBlogs.length === 0 && (
+//         <div className="text-center py-12">
+//           <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+//           <h3 className="text-lg font-medium text-gray-900 mb-2">No blog posts found</h3>
+//           <p className="text-gray-600 mb-4">
+//             {searchTerm ? 'Try adjusting your search' : 'Get started by creating your first blog post'}
+//           </p>
+//           <button
+//             onClick={() => {
+//               resetForm();
+//               setShowModal(true);
+//             }}
+//             className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark"
+//           >
+//             Create Blog Post
+//           </button>
+//         </div>
+//       )}
+
+//       {/* Blog Post Modal */}
+//       {showModal && (
+//         <div className="fixed inset-0 z-50 overflow-y-auto">
+//           <div className="flex items-center justify-center min-h-screen px-4">
+//             <div className="fixed inset-0 bg-black opacity-50" onClick={() => setShowModal(false)}></div>
+//             <div className="relative bg-white rounded-lg max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
+//               <h2 className="text-xl font-bold mb-4">
+//                 {editingBlog ? 'Edit Blog Post' : 'Create Blog Post'}
+//               </h2>
+              
+//               <form onSubmit={handleSubmit} className="space-y-4">
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">
+//                     Title *
+//                   </label>
+//                   <input
+//                     type="text"
+//                     required
+//                     value={formData.title}
+//                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+//                     placeholder="Enter blog post title"
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">
+//                     Content *
+//                   </label>
+//                   <textarea
+//                     required
+//                     rows={12}
+//                     value={formData.description}
+//                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+//                     placeholder="Write your blog post content here..."
+//                   />
+//                   <p className="text-xs text-gray-500 mt-1">
+//                     Tip: Use \n\n for paragraph breaks in your content
+//                   </p>
+//                 </div>
+
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">
+//                     Featured Image URL
+//                   </label>
+//                   <input
+//                     type="url"
+//                     value={formData.picture}
+//                     onChange={(e) => setFormData({ ...formData, picture: e.target.value })}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+//                     placeholder="https://example.com/image.jpg"
+//                   />
+//                   {formData.picture && (
+//                     <div className="mt-2">
+//                       <img
+//                         src={formData.picture}
+//                         alt="Preview"
+//                         className="w-full h-32 object-cover rounded-lg"
+//                         onError={(e) => {
+//                           e.currentTarget.style.display = 'none';
+//                         }}
+//                       />
+//                     </div>
+//                   )}
+//                 </div>
+
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                   <div>
+//                     <label className="block text-sm font-medium text-gray-700 mb-1">
+//                       Twitter Link
+//                     </label>
+//                     <input
+//                       type="url"
+//                       value={formData.twitter_link}
+//                       onChange={(e) => setFormData({ ...formData, twitter_link: e.target.value })}
+//                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+//                       placeholder="https://x.com/biolabmate"
+//                     />
+//                   </div>
+                  
+//                   <div>
+//                     <label className="block text-sm font-medium text-gray-700 mb-1">
+//                       LinkedIn Link
+//                     </label>
+//                     <input
+//                       type="url"
+//                       value={formData.linkedin_link}
+//                       onChange={(e) => setFormData({ ...formData, linkedin_link: e.target.value })}
+//                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+//                       placeholder="https://www.linkedin.com/company/biolabmate"
+//                     />
+//                   </div>
+//                 </div>
+
+//                 <div className="flex justify-end space-x-3 pt-4">
+//                   <button
+//                     type="button"
+//                     onClick={() => setShowModal(false)}
+//                     className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+//                   >
+//                     Cancel
+//                   </button>
+//                   <button
+//                     type="submit"
+//                     className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark"
+//                   >
+//                     {editingBlog ? 'Update' : 'Publish'} Blog Post
+//                   </button>
+//                 </div>
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default AdminBlogs;
+
+
+
+
+
+
+
+
+
+
+
+
+// AdminBlogs.tsx - Updated with category field support in blogs
 import React, { useEffect, useState } from "react";
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Calendar, 
-  FileText, 
-  Image, 
-  ExternalLink,
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Calendar,
+  FileText,
   Search,
-  Filter,
   Eye,
   Twitter,
-  Linkedin
+  Linkedin,
+  Tag
 } from "lucide-react";
 
+// FIXED: Added category to BlogPost interface
 interface BlogPost {
   id: string;
   title: string;
   description: string;
+  category: string;  //   ADDED
   date: string;
   picture?: string;
   twitter_link?: string;
@@ -896,9 +1367,11 @@ interface BlogPost {
   author_name?: string;
 }
 
+// FIXED: Added category to BlogForm interface
 interface BlogForm {
   title: string;
   description: string;
+  category: string;  //   ADDED
   picture: string;
   twitter_link: string;
   linkedin_link: string;
@@ -911,9 +1384,12 @@ const AdminBlogs: React.FC = () => {
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
+
+  // FIXED: Added category with default value "pollution"
   const [formData, setFormData] = useState<BlogForm>({
     title: "",
     description: "",
+    category: "Pollution",  //   ADDED
     picture: "",
     twitter_link: "https://x.com/biolabmate",
     linkedin_link: "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
@@ -949,28 +1425,40 @@ const AdminBlogs: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
+    // FIXED: Validate category is not empty
+    if (!formData.category || formData.category.trim() === "") {
+      setError("Category is required");
+      return;
+    }
+
     try {
       const token = localStorage.getItem('admin_token');
-      const url = editingBlog 
+      const url = editingBlog
         ? `${import.meta.env.VITE_API_BASE_URL}/admin/blogs/${editingBlog.id}`
         : `${import.meta.env.VITE_API_BASE_URL}/admin/blogs`;
-      
+
       const method = editingBlog ? 'PUT' : 'POST';
-      
+
+      // FIXED: formData now includes category
+      console.log('Sending to backend:', formData); // Debug log
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData),  // This now includes category!
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to save blog post');
       }
+
+      const result = await response.json();
+      console.log('Backend response:', result); // Debug log
 
       await fetchBlogs();
       setShowModal(false);
@@ -1006,11 +1494,13 @@ const AdminBlogs: React.FC = () => {
     }
   };
 
+  // FIXED: Added category when editing
   const handleEdit = (blog: BlogPost) => {
     setEditingBlog(blog);
     setFormData({
       title: blog.title,
       description: blog.description,
+      category: blog.category || "Pollution",  //   ADDED
       picture: blog.picture || "",
       twitter_link: blog.twitter_link || "https://x.com/biolabmate",
       linkedin_link: blog.linkedin_link || "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
@@ -1019,10 +1509,12 @@ const AdminBlogs: React.FC = () => {
     setShowModal(true);
   };
 
+  // FIXED: Added category to reset
   const resetForm = () => {
     setFormData({
       title: "",
       description: "",
+      category: "Pollution",  //   ADDED
       picture: "",
       twitter_link: "https://x.com/biolabmate",
       linkedin_link: "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
@@ -1031,67 +1523,70 @@ const AdminBlogs: React.FC = () => {
     setError("");
   };
 
-  const filteredBlogs = blogs.filter(blog => 
+  const filteredBlogs = blogs.filter(blog =>
     blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     blog.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Blog Posts</h1>
-          <p className="mt-2 text-gray-600">Create and manage your blog content</p>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Blog Posts</h1>
+        <p className="text-gray-600 mt-2">Create and manage your blog content</p>
+      </div>
+
+      {/* Action Bar */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <button
           onClick={() => {
             resetForm();
             setShowModal(true);
           }}
-          className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark flex items-center space-x-2"
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
         >
-          <Plus className="h-5 w-5" />
-          <span>New Blog Post</span>
+          <Plus className="w-5 h-5" />
+          Create New Post
         </button>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
       </div>
 
-      {/* Error Alert */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-700">{error}</p>
-        </div>
-      )}
-
       {/* Search */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search blog posts..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
-        </div>
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <input
+          type="text"
+          placeholder="Search blog posts..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+        />
       </div>
 
       {/* Blog Posts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredBlogs.map((blog) => (
-          <div key={blog.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div
+            key={blog.id}
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+          >
             {/* Blog Image */}
             {blog.picture && (
-              <div className="h-48 overflow-hidden">
+              <div className="h-48 overflow-hidden bg-gray-200">
                 <img
                   src={blog.picture}
                   alt={blog.title}
@@ -1099,35 +1594,39 @@ const AdminBlogs: React.FC = () => {
                 />
               </div>
             )}
-            
+
             <div className="p-6">
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                    {blog.title}
-                  </h3>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      <span>{new Date(blog.date).toLocaleDateString()}</span>
-                    </div>
-                    {blog.author_name && (
-                      <div className="flex items-center">
-                        <span>by {blog.author_name}</span>
-                      </div>
-                    )}
+              {/* Header with Category */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  {/* FIXED: Display category badge */}
+                  <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
+                    {blog.category || 'uncategorized'}
+                  </span>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    {new Date(blog.date).toLocaleDateString()}
                   </div>
                 </div>
+
+                <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                  {blog.title}
+                </h3>
+
+                {blog.author_name && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    by {blog.author_name}
+                  </p>
+                )}
               </div>
 
               {/* Description Preview */}
-              <p className="text-gray-700 text-sm mb-4 line-clamp-3">
+              <p className="text-sm text-gray-600 mb-4 line-clamp-3">
                 {blog.description}
               </p>
 
               {/* Social Links */}
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex items-center gap-2 mb-4">
                 {blog.twitter_link && (
                   <a
                     href={blog.twitter_link}
@@ -1136,7 +1635,7 @@ const AdminBlogs: React.FC = () => {
                     className="p-2 bg-sky-100 text-sky-600 rounded-lg hover:bg-sky-200"
                     title="Twitter"
                   >
-                    <Twitter className="h-4 w-4" />
+                    <Twitter className="w-4 h-4" />
                   </a>
                 )}
                 {blog.linkedin_link && (
@@ -1147,77 +1646,70 @@ const AdminBlogs: React.FC = () => {
                     className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
                     title="LinkedIn"
                   >
-                    <Linkedin className="h-4 w-4" />
+                    <Linkedin className="w-4 h-4" />
                   </a>
                 )}
               </div>
 
               {/* Actions */}
-              <div className="flex items-center justify-between">
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleEdit(blog)}
-                    className="flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"
-                  >
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(blog.id, blog.title)}
-                    className="flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100"
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Delete
-                  </button>
-                </div>
-                
+              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => handleEdit(blog)}
+                  className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(blog.id, blog.title)}
+                  className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete
+                </button>
                 <a
                   href={`/blog`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center text-sm text-gray-500 hover:text-gray-700"
                 >
-                  <Eye className="h-4 w-4 mr-1" />
+                  <Eye className="w-4 h-4 mr-1" />
                   View Live
                 </a>
               </div>
             </div>
           </div>
         ))}
-      </div>
 
-      {filteredBlogs.length === 0 && (
-        <div className="text-center py-12">
-          <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No blog posts found</h3>
-          <p className="text-gray-600 mb-4">
-            {searchTerm ? 'Try adjusting your search' : 'Get started by creating your first blog post'}
-          </p>
-          <button
-            onClick={() => {
-              resetForm();
-              setShowModal(true);
-            }}
-            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark"
-          >
-            Create Blog Post
-          </button>
-        </div>
-      )}
+        {filteredBlogs.length === 0 && (
+          <div className="col-span-full text-center py-12">
+            <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No blog posts found</h3>
+            <p className="text-gray-600">
+              {searchTerm
+                ? 'Try adjusting your search'
+                : 'Get started by creating your first blog post'}
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Blog Post Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4">
-            <div className="fixed inset-0 bg-black opacity-50" onClick={() => setShowModal(false)}></div>
-            <div className="relative bg-white rounded-lg max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div
+            className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <form onSubmit={handleSubmit} className="p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {editingBlog ? 'Edit Blog Post' : 'Create Blog Post'}
               </h2>
-              
-              <form onSubmit={handleSubmit} className="space-y-4">
+
+              <div className="space-y-4">
+                {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Title *
                   </label>
                   <input
@@ -1230,8 +1722,28 @@ const AdminBlogs: React.FC = () => {
                   />
                 </div>
 
+                {/* FIXED: Category Field - THIS IS THE KEY FIX! */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Tag className="w-4 h-4 inline mr-1" />
+                    Category *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Enter category (e.g., Pollution, innovation, sustainability)"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    This will be used to filter blogs on the blog page
+                  </p>
+                </div>
+
+                {/* Content */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Content *
                   </label>
                   <textarea
@@ -1242,13 +1754,14 @@ const AdminBlogs: React.FC = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="Write your blog post content here..."
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="mt-1 text-xs text-gray-500">
                     Tip: Use \n\n for paragraph breaks in your content
                   </p>
                 </div>
 
+                {/* Featured Image URL */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Featured Image URL
                   </label>
                   <input
@@ -1259,22 +1772,21 @@ const AdminBlogs: React.FC = () => {
                     placeholder="https://example.com/image.jpg"
                   />
                   {formData.picture && (
-                    <div className="mt-2">
-                      <img
-                        src={formData.picture}
-                        alt="Preview"
-                        className="w-full h-32 object-cover rounded-lg"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
+                    <img
+                      src={formData.picture}
+                      alt="Preview"
+                      className="w-full h-32 object-cover rounded-lg mt-2"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
                   )}
                 </div>
 
+                {/* Social Links */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Twitter Link
                     </label>
                     <input
@@ -1285,9 +1797,9 @@ const AdminBlogs: React.FC = () => {
                       placeholder="https://x.com/biolabmate"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       LinkedIn Link
                     </label>
                     <input
@@ -1299,24 +1811,28 @@ const AdminBlogs: React.FC = () => {
                     />
                   </div>
                 </div>
+              </div>
 
-                <div className="flex justify-end space-x-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark"
-                  >
-                    {editingBlog ? 'Update' : 'Publish'} Blog Post
-                  </button>
-                </div>
-              </form>
-            </div>
+              {/* Modal Actions */}
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  {editingBlog ? 'Update Post' : 'Create Post'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowModal(false);
+                    resetForm();
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
