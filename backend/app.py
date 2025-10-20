@@ -1776,9 +1776,9 @@ async def root():
 # Run application
 if __name__ == "__main__":
     import uvicorn
-    print(f"📊 Admin Panel: http://localhost:8080/admin")
-    print(f"🔗 API Docs: http://localhost:{config.API_PORT}/docs") 
-    print(f"🔑 Default Login: admin / BioLabMate")
+    print(f" Admin Panel: http://localhost:8080/admin")
+    print(f" API Docs: http://localhost:{config.API_PORT}/docs") 
+    print(f" Default Login: admin / BioLabMate")
     
     uvicorn.run(
         "app:app",

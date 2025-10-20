@@ -1079,7 +1079,7 @@ const TeamSection = () => {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   // Timer refs
-  const autoSlideRef = useRef<number | null>(null);
+  const autoSlideRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Fetch team members from API
@@ -1107,31 +1107,21 @@ const TeamSection = () => {
     fetchTeamMembers();
   }, []);
 
-  // --- 🔁 Continuous Auto Slide (like IncubatorPrograms) ---
+  // Auto slide
   const startAutoSlide = () => {
     if (!carouselApi || modalIndex !== null) return;
-    if (autoSlideRef.current) cancelAnimationFrame(autoSlideRef.current);
+    if (autoSlideRef.current) clearInterval(autoSlideRef.current);
 
-    const animate = () => {
+    autoSlideRef.current = setInterval(() => {
       const totalSlides = carouselApi.scrollSnapList().length;
       const current = carouselApi.selectedScrollSnap();
-
-      if (current < totalSlides - 1) {
-        carouselApi.scrollNext();
-      } else {
-        carouselApi.scrollTo(0); // seamless restart
-      }
-
-      autoSlideRef.current = requestAnimationFrame(() => {
-        setTimeout(() => animate(), 2500); // smooth interval
-      });
-    };
-
-    autoSlideRef.current = requestAnimationFrame(animate);
+      if (current < totalSlides - 1) carouselApi.scrollNext();
+      else carouselApi.scrollTo(0);
+    }, 2500);
   };
 
   const pauseAutoSlide = () => {
-    if (autoSlideRef.current) cancelAnimationFrame(autoSlideRef.current);
+    if (autoSlideRef.current) clearInterval(autoSlideRef.current);
     if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     resumeTimeoutRef.current = setTimeout(() => startAutoSlide(), 7000);
   };
@@ -1144,7 +1134,7 @@ const TeamSection = () => {
 
     return () => {
       carouselApi.off('select', onSelect);
-      if (autoSlideRef.current) cancelAnimationFrame(autoSlideRef.current);
+      if (autoSlideRef.current) clearInterval(autoSlideRef.current);
       if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     };
   }, [carouselApi, modalIndex]);
@@ -1217,7 +1207,7 @@ const TeamSection = () => {
 
         <Carousel
           className="max-w-6xl mx-auto px-2 cursor-pointer"
-          opts={{ align: 'center', loop: true, duration: 20 }} // ✅ loop enabled
+          opts={{ align: 'center', loop: false, duration: 20 }}
           setApi={setCarouselApi}
         >
           <CarouselContent>
@@ -1231,11 +1221,12 @@ const TeamSection = () => {
                   onClick={() => openModal(index)}
                   onMouseEnter={() => setHoverIndex(index)}
                   onMouseLeave={() => setHoverIndex(null)}
+                  data-cursor="profile" // 👈 enables custom cursor text
                 >
                   <img
                     src={member.image_url || '/placeholder.png'}
                     alt={member.name}
-                    className={`w-full h-[24rem] md:h-[28rem] object-cover transition-all duration-500 ${
+                    className={`profile-img w-full h-[24rem] md:h-[28rem] object-cover transition-all duration-500 ${
                       hoverIndex === index ? 'grayscale brightness-75' : ''
                     }`}
                   />
@@ -1336,6 +1327,7 @@ const TeamSection = () => {
 };
 
 export default TeamSection;
+
 
 
 
