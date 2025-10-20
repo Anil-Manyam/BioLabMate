@@ -615,12 +615,12 @@ export default function CustomCursor({ videoSrc = '/background.mp4' }: CustomCur
 
         {/* Clickable elements: larger smooth dot */}
         {cursorMode === 'clickable' && (
-          <div className="w-7 h-7 bg-white/90 rounded-full shadow-md cursor-transition" />
+          <div className="w-5 h-5 bg-white/90 rounded-full shadow-md cursor-transition" />
         )}
 
         {/* Navigation: small clean dot */}
         {cursorMode === 'nav' && (
-          <div className="w-5 h-5 bg-white/80 rounded-full shadow-sm cursor-transition" />
+          <div className="w-6 h-6 bg-white/80 rounded-full shadow-sm cursor-transition" />
         )}
 
         {/* Profile hover: circular gradient + text (like your screenshot) */}

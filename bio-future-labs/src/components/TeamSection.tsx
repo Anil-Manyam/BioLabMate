@@ -1042,7 +1042,6 @@
 
 
 
-// // Final code with taller profile photos and improved modal - Admin pannel too
 import { useEffect, useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Linkedin, Mail, X } from 'lucide-react';
@@ -1079,7 +1078,7 @@ const TeamSection = () => {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   // Timer refs
-  const autoSlideRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoSlideRef = useRef<number | null>(null);
   const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Fetch team members from API
@@ -1107,21 +1106,31 @@ const TeamSection = () => {
     fetchTeamMembers();
   }, []);
 
-  // Auto slide
+  // --- 🔁 Continuous Auto Slide (like IncubatorPrograms) ---
   const startAutoSlide = () => {
     if (!carouselApi || modalIndex !== null) return;
-    if (autoSlideRef.current) clearInterval(autoSlideRef.current);
+    if (autoSlideRef.current) cancelAnimationFrame(autoSlideRef.current);
 
-    autoSlideRef.current = setInterval(() => {
+    const animate = () => {
       const totalSlides = carouselApi.scrollSnapList().length;
       const current = carouselApi.selectedScrollSnap();
-      if (current < totalSlides - 1) carouselApi.scrollNext();
-      else carouselApi.scrollTo(0);
-    }, 2500);
+
+      if (current < totalSlides - 1) {
+        carouselApi.scrollNext();
+      } else {
+        carouselApi.scrollTo(0); // seamless restart
+      }
+
+      autoSlideRef.current = requestAnimationFrame(() => {
+        setTimeout(() => animate(), 4500); // smooth interval
+      });
+    };
+
+    autoSlideRef.current = requestAnimationFrame(animate);
   };
 
   const pauseAutoSlide = () => {
-    if (autoSlideRef.current) clearInterval(autoSlideRef.current);
+    if (autoSlideRef.current) cancelAnimationFrame(autoSlideRef.current);
     if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     resumeTimeoutRef.current = setTimeout(() => startAutoSlide(), 7000);
   };
@@ -1134,7 +1143,7 @@ const TeamSection = () => {
 
     return () => {
       carouselApi.off('select', onSelect);
-      if (autoSlideRef.current) clearInterval(autoSlideRef.current);
+      if (autoSlideRef.current) cancelAnimationFrame(autoSlideRef.current);
       if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     };
   }, [carouselApi, modalIndex]);
@@ -1207,7 +1216,7 @@ const TeamSection = () => {
 
         <Carousel
           className="max-w-6xl mx-auto px-2 cursor-pointer"
-          opts={{ align: 'center', loop: false, duration: 20 }}
+          opts={{ align: 'center', loop: true, duration: 20 }} // ✅ loop enabled
           setApi={setCarouselApi}
         >
           <CarouselContent>
@@ -1221,12 +1230,12 @@ const TeamSection = () => {
                   onClick={() => openModal(index)}
                   onMouseEnter={() => setHoverIndex(index)}
                   onMouseLeave={() => setHoverIndex(null)}
-                  data-cursor="profile" // 👈 enables custom cursor text
+                  data-cursor="profile"
                 >
                   <img
                     src={member.image_url || '/placeholder.png'}
                     alt={member.name}
-                    className={`profile-img w-full h-[24rem] md:h-[28rem] object-cover transition-all duration-500 ${
+                    className={`w-full h-[24rem] md:h-[28rem] object-cover transition-all duration-500 ${
                       hoverIndex === index ? 'grayscale brightness-75' : ''
                     }`}
                   />

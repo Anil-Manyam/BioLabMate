@@ -482,16 +482,16 @@
 
 
 
-// circular journey carousel with unifed Admin pannel
-import React, { useEffect, useState } from 'react';
-import { Trophy, Rocket, ShieldCheck, Globe, Landmark } from 'lucide-react';
-import JourneyBg from '@/assets/1.jpg';
-import Journey1 from '@/assets/1.jpg';
-import Journey2 from '@/assets/2.jpg';
-import Journey3 from '@/assets/3.jpg';
-import Journey4 from '@/assets/4.jpg';
-import Journey5 from '@/assets/5.jpg';
-import Journey6 from '@/assets/6.jpg';
+// circular journey carousel with unifed Admin pannel + continuous clockwise rotation
+import React, { useEffect, useState, useRef } from "react";
+import { Trophy, Rocket, ShieldCheck, Globe, Landmark } from "lucide-react";
+import JourneyBg from "@/assets/1.jpg";
+import Journey1 from "@/assets/1.jpg";
+import Journey2 from "@/assets/2.jpg";
+import Journey3 from "@/assets/3.jpg";
+import Journey4 from "@/assets/4.jpg";
+import Journey5 from "@/assets/5.jpg";
+import Journey6 from "@/assets/6.jpg";
 
 const iconMap: { [key: string]: any } = {
   Trophy,
@@ -516,10 +516,14 @@ const CircularJourneyFromDB: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [rotation, setRotation] = useState(0);
+  const [rotation, setRotation] = useState(0); // start with 0° so top node is first
 
   const journeyImages = [Journey1, Journey2, Journey3, Journey4, Journey5, Journey6];
   const radius = 340;
+
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const userInteractionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserInteractingRef = useRef(false);
 
   useEffect(() => {
     fetchMilestones();
@@ -529,23 +533,17 @@ const CircularJourneyFromDB: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/milestones`);
       if (!response.ok) throw new Error(`Failed to fetch milestones: ${response.status}`);
-
       const data = await response.json();
-
       if (Array.isArray(data)) {
-        // Sort by order_index or year (ascending)
         const sorted = data.sort((a, b) => a.order_index - b.order_index);
         setMilestones(sorted);
       } else {
-        console.error('Milestones data is not an array:', data);
         setMilestones([]);
       }
     } catch (err) {
-      console.error('Error fetching milestones:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load milestones');
+      setError(err instanceof Error ? err.message : "Failed to load milestones");
       setMilestones([]);
     } finally {
       setLoading(false);
@@ -553,34 +551,86 @@ const CircularJourneyFromDB: React.FC = () => {
   };
 
   const getIconForMilestone = (title: string): React.ComponentType<any> => {
-    if (title.toLowerCase().includes('winner') || title.toLowerCase().includes('award')) return Trophy;
-    if (title.toLowerCase().includes('accelerator')) return Rocket;
-    if (title.toLowerCase().includes('program')) return ShieldCheck;
-    if (title.toLowerCase().includes('international') || title.toLowerCase().includes('blue')) return Globe;
-    if (title.toLowerCase().includes('parliament') || title.toLowerCase().includes('committee')) return Landmark;
+    if (title.toLowerCase().includes("winner") || title.toLowerCase().includes("award")) return Trophy;
+    if (title.toLowerCase().includes("accelerator")) return Rocket;
+    if (title.toLowerCase().includes("program")) return ShieldCheck;
+    if (title.toLowerCase().includes("international") || title.toLowerCase().includes("blue")) return Globe;
+    if (title.toLowerCase().includes("parliament") || title.toLowerCase().includes("committee")) return Landmark;
     return Trophy;
-  };
-
-  const handleNodeClick = (index: number) => {
-    const totalNodes = milestones.length;
-    const anglePerNode = 360 / totalNodes;
-    const currentAngle = index * anglePerNode;
-    const targetAngle = 270;
-    const rotationNeeded = targetAngle - currentAngle;
-    setRotation(rotationNeeded);
-    setActiveIndex(index);
   };
 
   const getNodePosition = (index: number) => {
     const totalNodes = milestones.length;
     const anglePerNode = 360 / totalNodes;
-    const angle = (index * anglePerNode) * (Math.PI / 180);
+    // Start from top (0°)
+    const angle = (90 + index * anglePerNode) * (Math.PI / 180);
     return {
       x: Math.cos(angle) * radius,
       y: Math.sin(angle) * radius,
     };
   };
 
+  const handleNodeClick = (index: number) => {
+    stopAutoRotationTemporarily();
+    setActiveIndex(index);
+    updateRotation(index);
+  };
+
+  // Active node always moves to 0° (top)
+  const updateRotation = (index: number) => {
+    const totalNodes = milestones.length;
+    const anglePerNode = 360 / totalNodes;
+    // Keep rotating clockwise continuously
+    const newRotation = 0 + index * anglePerNode;
+    setRotation(newRotation);
+  };
+
+  /** ---------- AUTO ROTATION CLOCKWISE ---------- **/
+  useEffect(() => {
+    if (!milestones.length) return;
+
+    const startAutoRotate = () => {
+      if (autoRotateRef.current) clearInterval(autoRotateRef.current);
+
+      autoRotateRef.current = setInterval(() => {
+        setActiveIndex((prev) => {
+          const next = (prev + 1) % milestones.length;
+          // Increase rotation angle clockwise continuously
+          setRotation((prevRot) => prevRot + 360 / milestones.length);
+          return next;
+        });
+      }, 3000); // rotate every 3s
+    };
+
+    startAutoRotate();
+    return () => {
+      if (autoRotateRef.current) clearInterval(autoRotateRef.current);
+      if (userInteractionTimeoutRef.current) clearTimeout(userInteractionTimeoutRef.current);
+    };
+  }, [milestones]);
+
+  const stopAutoRotationTemporarily = () => {
+    if (autoRotateRef.current) clearInterval(autoRotateRef.current);
+    if (userInteractionTimeoutRef.current) clearTimeout(userInteractionTimeoutRef.current);
+
+    isUserInteractingRef.current = true;
+
+    userInteractionTimeoutRef.current = setTimeout(() => {
+      isUserInteractingRef.current = false;
+      const totalNodes = milestones.length;
+      if (totalNodes > 0) {
+        autoRotateRef.current = setInterval(() => {
+          setActiveIndex((prev) => {
+            const next = (prev + 1) % totalNodes;
+            setRotation((prevRot) => prevRot + 360 / totalNodes);
+            return next;
+          });
+        }, 3000);
+      }
+    }, 5000);
+  };
+
+  /** ---------- UI STATES ---------- **/
   if (loading) {
     return (
       <section className="py-32 flex justify-center items-center bg-black text-white">
@@ -619,9 +669,9 @@ const CircularJourneyFromDB: React.FC = () => {
   return (
     <section
       className="relative min-h-[900px] bg-gray-900 text-gray-900 py-20 overflow-hidden bg-cover bg-center bg-fixed"
-      style={{
-        backgroundImage: `url(${JourneyBg})`,
-      }}
+      style={{ backgroundImage: `url(${JourneyBg})` }}
+      onMouseEnter={stopAutoRotationTemporarily}
+      onTouchStart={stopAutoRotationTemporarily}
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
 
@@ -638,23 +688,20 @@ const CircularJourneyFromDB: React.FC = () => {
                 className="absolute inset-0 transition-opacity duration-700"
                 style={{
                   backgroundImage: `url(${journeyImages[activeIndex % journeyImages.length]})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
                 }}
               >
                 <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
               </div>
 
-              {/* Inner Content */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
                 <div className="mb-5 w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/50 border-4 border-white">
                   <IconComponent className="w-8 h-8 text-white" />
                 </div>
-
                 <div className="mb-4 px-6 py-2 bg-blue-600 rounded-full">
                   <span className="text-white font-bold text-lg">{activeItem.year}</span>
                 </div>
-
                 <h3 className="text-xl md:text-2xl font-bold mb-3 text-white leading-tight">
                   {activeItem.title}
                 </h3>
@@ -667,12 +714,12 @@ const CircularJourneyFromDB: React.FC = () => {
 
           {/* Orbiting Nodes */}
           <div
-            className="absolute left-1/2 top-1/2 transition-transform duration-700 ease-out"
+            className="absolute left-1/2 top-1/2 transition-transform duration-1000 ease-linear"
             style={{
               width: `${radius * 2 + 50}px`,
               height: `${radius * 2 + 50}px`,
               transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
-              transformOrigin: 'center center',
+              transformOrigin: "center center",
             }}
           >
             {milestones.map((item, index) => {
@@ -685,30 +732,29 @@ const CircularJourneyFromDB: React.FC = () => {
                   className="absolute transition-all duration-500 group cursor-pointer"
                   style={{
                     left: `calc(50% + ${pos.x}px)`,
-                    top: `calc(50% + ${pos.y}px)`,
+                    top: `calc(50% - ${pos.y}px)`, // flipped for top-based alignment
                     transform: `translate(-50%, -50%) rotate(${-rotation}deg)`,
                   }}
                 >
                   <div
                     className={`relative w-7 h-7 rounded-full border-4 ${
                       isActive
-                        ? 'bg-blue-600 border-white shadow-lg shadow-blue-500/50 scale-125'
-                        : 'bg-gray-800 border-gray-500 hover:border-white hover:scale-110'
+                        ? "bg-blue-600 border-white shadow-lg shadow-blue-500/50 scale-125"
+                        : "bg-gray-800 border-gray-500 hover:border-white hover:scale-110"
                     } transition-all duration-300`}
                   >
                     {isActive && (
                       <div className="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-50" />
                     )}
                   </div>
-
                   <div
                     className={`absolute -top-5 left-1/2 -translate-x-1/2 text-xs whitespace-nowrap transition-all duration-300 ${
                       isActive
-                        ? 'text-blue-400 font-bold scale-110'
-                        : 'text-gray-300 group-hover:text-white'
+                        ? "text-blue-400 font-bold scale-110"
+                        : "text-gray-300 group-hover:text-white"
                     }`}
                   >
-                    {String(index + 1).padStart(2, '0')}. Milestone
+                    {String(index + 1).padStart(2, "0")}. Milestone
                   </div>
                 </button>
               );
@@ -738,8 +784,6 @@ const CircularJourneyFromDB: React.FC = () => {
 };
 
 export default CircularJourneyFromDB;
-
-
 
 
 

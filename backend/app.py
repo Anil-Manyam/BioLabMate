@@ -1770,7 +1770,7 @@ async def root():
         "version": "2.0.0",
         "admin_panel": "/admin",
         "api_docs": "/docs",
-        "status": "✅ All issues FIXED - Password, Auth, Milestones!"
+        "status": " All issues FIXED - Password, Auth, Milestones!"
     }
 
 # Run application
