@@ -5,7 +5,7 @@ import { Award, Star } from 'lucide-react';
 import Image1 from '@/assets/Bioenterprise_logo.png';
 import Image2 from '@/assets/Emera_ideahub_logo.png';
 import Image3 from '@/assets/Foresight_logo.png';
-import Image4 from '@/assets/Genesis_logo.png';
+import Image4 from '@/assets/genesis_logo.png';
 import Image5 from '@/assets/Lab2Market_Logo.png';
 import Image6 from '@/assets/NRC_canada.png';
 import Image7 from '@/assets/ocean_startup_project_logo_.png';
