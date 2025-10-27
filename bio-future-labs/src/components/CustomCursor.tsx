@@ -595,23 +595,59 @@ export default function CustomCursor({ videoSrc = '/background.mp4' }: CustomCur
           </div>
         )}
 
-        {/* Text hover: magnified video */}
+         {/*Text hover: pure white transparent glass magnifier*/}
+        {/* {cursorMode === 'text' && (
+          <div
+            className="relative w-20 h-20 rounded-full cursor-transition overflow-hidden"
+            style={{
+              animation: 'magnify 0.22s ease forwards',
+              background: 'rgba(255, 255, 255, 0.15)', // subtle white tint
+              backdropFilter: 'blur(3px) brightness(1.2)',
+              WebkitBackdropFilter: 'blur(3px) brightness(1.2)',
+              border: '1.5px solid rgba(255, 255, 255, 0.5)',
+              boxShadow:
+                'inset 0 1px 3px rgba(255,255,255,0.6), inset 0 -2px 5px rgba(0,0,0,0.1), 0 6px 20px rgba(255,255,255,0.08)',
+              mixBlendMode: 'screen',
+            }}
+          >
+         
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(circle at 30% 25%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.15) 40%, transparent 100%)',
+                filter: 'blur(0.5px)',
+              }}
+            ></div>
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                border: '1px solid rgba(255,255,255,0.35)',
+                boxShadow:
+                  'inset 0 0 25px rgba(255,255,255,0.3), 0 0 12px rgba(255,255,255,0.25)',
+                mixBlendMode: 'overlay',
+              }}
+            ></div>
+          </div>
+        )} */}
+        
+        {/* Text hover: small pure white glass dot */}
         {cursorMode === 'text' && (
           <div
-            className="w-20 h-20 rounded-full overflow-hidden border border-white/60 backdrop-blur-md cursor-transition"
-            style={{ animation: 'magnify 0.22s ease forwards' }}
-          >
-            <video
-              ref={videoRef}
-              src={videoSrc}
-              className="w-full h-full object-cover scale-110"
-              loop
-              muted
-              playsInline
-              preload="metadata"
-            />
-          </div>
+            className="w-7 h-7 rounded-full cursor-transition"
+            style={{
+              background: 'rgba(255,255,255,0.2)', // transparent white glass
+              backdropFilter: 'blur(6px) brightness(1.3)',
+              WebkitBackdropFilter: 'blur(6px) brightness(1.3)',
+              border: '1px solid rgba(255,255,255,0.5)',
+              boxShadow:
+                'inset 0 1px 3px rgba(255,255,255,0.7), inset 0 -1px 2px rgba(0,0,0,0.15), 0 2px 8px rgba(255,255,255,0.25)',
+              mixBlendMode: 'screen',
+            }}
+          ></div>
         )}
+
+
 
         {/* Clickable elements: larger smooth dot */}
         {cursorMode === 'clickable' && (
