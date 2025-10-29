@@ -1531,6 +1531,32 @@ async def update_team_member(
         logger.error(f"Error updating team member {member_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to update team member")
 
+@app.delete("/admin/team/{member_id}")
+async def delete_team_member(
+    member_id: str,
+    current_user: dict = Depends(get_current_admin)
+):
+    """Delete a team member"""
+    try:
+        if not ObjectId.is_valid(member_id):
+            raise HTTPException(status_code=400, detail="Invalid member ID")
+        
+        result = await database.team_members.delete_one(
+            {"_id": ObjectId(member_id)}
+        )
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Team member not found")
+        
+        return {"message": "Team member deleted successfully", "deleted_id": member_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting team member {member_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete team member")
+
+
+
 # =============================================================================
 # MILESTONE MANAGEMENT ROUTES (UPDATED FOR YEAR-BASED)
 # =============================================================================
