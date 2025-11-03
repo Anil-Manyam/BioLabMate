@@ -752,7 +752,7 @@ import { Card } from '@/components/ui/card';
 import { Linkedin, Mail, X } from 'lucide-react';
 import Sanjay from '@/assets/Sanjay.jpg';
 import Sarika from '@/assets/Sarika.jpg';
-import Gordon from '@/assets/gordon.jpg';
+import Gordon from '@/assets/advisor.jpg';
 import Vaibhav from '@/assets/Vaibhav.jpg';
 import Anil from '@/assets/Anil.jpg';
 import TeamBackground from '@/assets/Team_background.jpg';
