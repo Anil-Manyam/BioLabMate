@@ -558,6 +558,7 @@
 
 
 // AdminMilestones-fixed.tsx - Milestone form with year input only
+
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Calendar, Search, Star } from 'lucide-react';
 
@@ -681,12 +682,23 @@ const AdminMilestones: React.FC = () => {
         .map(a => a.trim())
         .filter(a => a.length > 0);
 
+      // Handle image URL or local asset path
+      let imagePath = formData.image_url.trim();
+      if (imagePath.startsWith('@/')) {
+        try {
+          const asset = new URL(imagePath.replace('@/', '/src/'), import.meta.url).href;
+          imagePath = asset;
+        } catch {
+          console.warn('Invalid local asset path provided:', imagePath);
+        }
+      }
+
       const payload = {
         title: formData.title,
         description: formData.description,
         year: parseInt(String(formData.year)),
         category: formData.category || 'General',
-        image_url: formData.image_url || null,
+        image_url: imagePath || null,
         achievements: achievementsArray,
         is_major: formData.is_major,
         order_index: formData.order_index || 0
@@ -1018,10 +1030,10 @@ const AdminMilestones: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Image URL</label>
+                <label className="block text-sm font-medium text-gray-700">Image URL or Local Path</label>
                 <input
-                  type="url"
-                  placeholder="/src/assets/milestone.jpg"
+                  type="text"
+                  placeholder="https://example.com/img.jpg or @/assets/1.jpg"
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1034,7 +1046,7 @@ const AdminMilestones: React.FC = () => {
                 </label>
                 <textarea
                   rows={4}
-                  placeholder="Company incorporation&#10;Initial team formation&#10;Vision and mission established"
+                  placeholder="Achievement 1&#10;Achievement 2&#10;Achievement 3"
                   value={formData.achievements}
                   onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1043,30 +1055,30 @@ const AdminMilestones: React.FC = () => {
 
               <div className="flex items-center">
                 <input
-                  type="checkbox"
                   id="is_major"
+                  type="checkbox"
                   checked={formData.is_major}
                   onChange={(e) => setFormData({ ...formData, is_major: e.target.checked })}
-                  className="w-4 h-4 text-blue-600"
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                 />
                 <label htmlFor="is_major" className="ml-2 text-sm text-gray-700">
-                  Major Milestone (will be highlighted)
+                  Mark as major milestone
                 </label>
               </div>
 
-              <div className="flex justify-end space-x-4 pt-4">
+              <div className="flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
-                  {editingMilestone ? 'Update' : 'Create'}
+                  {editingMilestone ? 'Update Milestone' : 'Add Milestone'}
                 </button>
               </div>
             </form>

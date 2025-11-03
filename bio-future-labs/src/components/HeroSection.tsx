@@ -821,7 +821,7 @@ const HeroSection = () => {
     }
 
     const percent = (transparent / (pixels.length / 4)) * 100;
-    if (percent > 80) {
+    if (percent > 10) {
       fadeOutOverlay();
       setHasClearedAll(true);
     }
