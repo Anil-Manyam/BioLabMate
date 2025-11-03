@@ -230,12 +230,8 @@ import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
-/**
- * 🌟 AnimatedSection with parallax, rotation, and blur effects
- * Gives a cinematic scroll transition between each section
- */
 const AnimatedSection = ({ children }: { children: React.ReactNode }) => {
   const controls = useAnimation();
   const [ref, inView] = useInView({
@@ -289,15 +285,42 @@ const AnimatedSection = ({ children }: { children: React.ReactNode }) => {
 
 const Index = () => {
   const navigate = useNavigate();
+  const contactSectionRef = useRef<HTMLDivElement>(null);
+
+  // Handle hash-based navigation when page loads or hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1); // Remove the # symbol
+      
+      if (hash === 'contact' && contactSectionRef.current) {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          contactSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    };
+
+    // Call on initial load
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden scroll-smooth">
       <Navigation />
 
       {/* Hero Section */}
-      <AnimatedSection>
-        <HeroSection />
-      </AnimatedSection>
+      <div id="hero">
+        <AnimatedSection>
+          <HeroSection />
+        </AnimatedSection>
+      </div>
 
       {/* Journey Section */}
       <AnimatedSection>
@@ -315,9 +338,11 @@ const Index = () => {
       </AnimatedSection>
 
       {/* Contact Section */}
-      <AnimatedSection>
-        <ContactSection />
-      </AnimatedSection>
+      <div id="contact" ref={contactSectionRef}>
+        <AnimatedSection>
+          <ContactSection />
+        </AnimatedSection>
+      </div>
 
       <Footer />
     </div>
@@ -325,7 +350,6 @@ const Index = () => {
 };
 
 export default Index;
-
 
 
 // // good transtion effect between sections along with video background
