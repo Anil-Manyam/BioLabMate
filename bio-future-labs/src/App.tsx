@@ -127,7 +127,7 @@ import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminMilestones from "@/pages/admin/AdminMilestones";
 import AdminContacts from "@/pages/admin/AdminContacts";
 import AdminLayout from "./components/admin/AdminLayout";
-
+import AdminProducts from "./pages/admin/AdminProducts";
 import CustomCursor from "./components/CustomCursor";
 import "./App.css";
 
@@ -153,6 +153,7 @@ export default function App() {
           <Route path="users" element={<AdminUsers />} />
           <Route path="milestones" element={<AdminMilestones />} />
           <Route path="contacts" element={<AdminContacts />} />
+           <Route path="products" element={<AdminProducts />} />
         </Route>
         
         {/* Legacy redirects */}

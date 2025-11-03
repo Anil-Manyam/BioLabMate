@@ -378,12 +378,13 @@
 
 
 
-# Updated models.py - Add category field to blog models
+# Updated models.py - Add category field to blog models & products backend
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Literal
 from datetime import datetime
 from bson import ObjectId
 from enum import Enum
+
 
 class PyObjectId(ObjectId):
     @classmethod
@@ -406,6 +407,70 @@ class UserRole(str, Enum):
     USER = "user"
     SUPER_ADMIN = "super_admin"
 
+
+
+# ==============================================================================
+# PRODUCT MODELS
+# ==============================================================================
+
+class ProductCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=200)
+    tagline: str = Field(..., min_length=1, max_length=300)
+    description: str = Field(..., min_length=1)
+    price: Optional[float] = None
+    image_url: str = Field(..., min_length=1)
+    features: List[str] = Field(default_factory=list)
+    specifications: Optional[dict] = None
+    category: str = Field(..., min_length=1, max_length=100)
+    is_featured: bool = False
+    order_index: int = 0
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    tagline: Optional[str] = Field(None, min_length=1, max_length=300)
+    description: Optional[str] = Field(None, min_length=1)
+    price: Optional[float] = None
+    image_url: Optional[str] = None
+    features: Optional[List[str]] = None
+    specifications: Optional[dict] = None
+    category: Optional[str] = None
+    is_featured: Optional[bool] = None
+    order_index: Optional[int] = None
+
+class ProductResponse(BaseModel):
+    id: str
+    name: str
+    tagline: str
+    description: str
+    price: Optional[float] = None
+    image_url: str
+    features: List[str] = []
+    specifications: Optional[dict] = None
+    category: str
+    is_featured: bool = False
+    order_index: int = 0
+    created_at: str
+    updated_at: Optional[str] = None
+
+class ProductDB(BaseModel):
+    name: str
+    tagline: str
+    description: str
+    price: Optional[float] = None
+    image_url: str
+    features: List[str] = []
+    specifications: Optional[dict] = None
+    category: str
+    is_featured: bool = False
+    order_index: int = 0
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
 # ==============================================================================
 # BLOG MODELS - FIXED WITH CATEGORY FIELD
 # ==============================================================================
@@ -413,7 +478,7 @@ class UserRole(str, Enum):
 class BlogPostCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: str = Field(..., min_length=1)
-    category: str = Field(default="Pollution", min_length=1, max_length=50)  #   ADDED
+    category: str = Field(default="Pollution", min_length=1, max_length=50)  # ✅ ADDED
     picture: Optional[str] = None
     twitter_link: Optional[str] = None
     linkedin_link: Optional[str] = None
@@ -421,7 +486,7 @@ class BlogPostCreate(BaseModel):
 class BlogPostUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = Field(None, min_length=1)
-    category: Optional[str] = Field(None, min_length=1, max_length=50)  #   ADDED
+    category: Optional[str] = Field(None, min_length=1, max_length=50)  # ✅ ADDED
     picture: Optional[str] = None
     twitter_link: Optional[str] = None
     linkedin_link: Optional[str] = None
@@ -430,7 +495,7 @@ class BlogPostResponse(BaseModel):
     id: str
     title: str
     description: str
-    category: str  #   ADDED
+    category: str  # ✅ ADDED
     date: str
     picture: Optional[str] = None
     twitter_link: Optional[str] = None
@@ -620,7 +685,7 @@ class DashboardStats(BaseModel):
 class BlogPostDB(BaseModel):
     title: str
     description: str
-    category: str = "Pollution"  #   ADDED
+    category: str = "Pollution"  # ✅ ADDED
     picture: Optional[str] = None
     twitter_link: Optional[str] = None
     linkedin_link: Optional[str] = None
@@ -681,3 +746,4 @@ class ContactDB(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
+

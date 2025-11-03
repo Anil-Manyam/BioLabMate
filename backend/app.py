@@ -66,8 +66,8 @@
 #         "description": blog["description"],
 #         "date": blog["date"],
 #         "picture": blog.get("picture"),
-#         "twitter_link": blog.get("twitter_link"),      #   ADD this
-#         "linkedin_link": blog.get("linkedin_link"),    #   ADD this
+#         "twitter_link": blog.get("twitter_link"),      # ✅ ADD this
+#         "linkedin_link": blog.get("linkedin_link"),    # ✅ ADD this
 #         "created_at": blog["created_at"].isoformat()
 #     }
 
@@ -205,7 +205,7 @@
 #         contact_dict["submitted_at"] = datetime.now()
         
 #         await database.contacts.insert_one(contact_dict)
-#         logger.info("  Contact form saved to database")
+#         logger.info("✅ Contact form saved to database")
         
 #         return {
 #             "message": "Thank you! Your message has been received successfully.",
@@ -553,7 +553,6 @@
 
 
 
-
 # Fixed backend app.py - Corrects the milestone helper and admin auth issues
 from fastapi import FastAPI, HTTPException, Depends, status, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -567,6 +566,12 @@ import os
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 import bcrypt
+from models import ProductCreate, ProductUpdate, ProductResponse
+from datetime import datetime
+from bson import ObjectId
+from passlib.context import CryptContext
+from jose import JWTError, jwt
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # Load environment variables
 load_dotenv()
@@ -611,7 +616,7 @@ class UserRole(str, Enum):
 class BlogPostCreate(BaseModel):
     title: str
     description: str
-    category: str = "Pollution"  #   ADDED WITH DEFAULT
+    category: str = "Pollution"  # ✅ ADDED WITH DEFAULT
     picture: Optional[str] = None
     twitter_link: Optional[str] = "https://x.com/biolabmate"
     linkedin_link: Optional[str] = "https://www.linkedin.com/company/biolabmate/?originalSubdomain=ca"
@@ -620,7 +625,7 @@ class BlogPostCreate(BaseModel):
 class BlogPostUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    category: Optional[str] = None  #   ADDED
+    category: Optional[str] = None  # ✅ ADDED
     picture: Optional[str] = None
     twitter_link: Optional[str] = None
     linkedin_link: Optional[str] = None
@@ -630,7 +635,7 @@ class BlogPostResponse(BaseModel):
     id: str
     title: str
     description: str
-    category: str  #   ADDED
+    category: str  # ✅ ADDED
     date: str
     picture: Optional[str] = None
     twitter_link: Optional[str] = None
@@ -781,10 +786,26 @@ class DashboardStats(BaseModel):
     unread_contacts: int
     recent_activities: List[dict]
 
-# FIXED: Password hashing with better bcrypt handling
-from passlib.context import CryptContext
-from jose import JWTError, jwt
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+# Product helper function
+def product_helper(product) -> dict:
+    return {
+        "id": str(product["_id"]),
+        "name": product["name"],
+        "tagline": product["tagline"],
+        "description": product["description"],
+        "price": product.get("price"),
+        "image_url": product["image_url"],
+        "features": product.get("features", []),
+        "specifications": product.get("specifications"),
+        "category": product["category"],
+        "is_featured": product.get("is_featured", False),
+        "order_index": product.get("order_index", 0),
+        "created_at": product["created_at"].isoformat(),
+        "updated_at": product.get("updated_at").isoformat() if product.get("updated_at") else None
+    }
+
+
+
 
 # Create context with explicit bcrypt settings to avoid version issues
 pwd_context = CryptContext(
@@ -930,7 +951,7 @@ async def lifespan(app: FastAPI):
             indexes = await database.team_members.index_information()
             if 'email_1' in indexes:
                 await database.team_members.drop_index('email_1')
-                logger.info("  Dropped email_1 unique index to allow duplicate emails")
+                logger.info("✅ Dropped email_1 unique index to allow duplicate emails")
         except Exception as e:
             logger.warning(f"Email index drop warning: {e}")
         
@@ -940,7 +961,7 @@ async def lifespan(app: FastAPI):
             await database.users.create_index("email", unique=True)
             await database.milestones.create_index("year")
             await database.milestones.create_index("order_index")
-            logger.info("  Created necessary indexes")
+            logger.info("✅ Created necessary indexes")
         except Exception as e:
             logger.warning(f"Index creation warning (may already exist): {e}")
         
@@ -1243,7 +1264,7 @@ async def submit_contact_form(contact_data: ContactForm):
         contact_dict["is_read"] = False
         
         await database.contacts.insert_one(contact_dict)
-        logger.info("  Contact form saved to database")
+        logger.info("✅ Contact form saved to database")
         
         return {
             "message": "Thank you! Your message has been received successfully.",
@@ -1257,56 +1278,200 @@ async def submit_contact_form(contact_data: ContactForm):
             "status": "received"
         }
 
+# ==============================================================================
+# PUBLIC PRODUCT ENDPOINTS
+# ==============================================================================
+
+@app.get("/api/products")
+async def get_all_products(category: Optional[str] = None, featured: Optional[bool] = None):
+    """Get all products, optionally filtered by category or featured status"""
+    try:
+        products = []
+        collection_names = await database.list_collection_names()
+        if "products" in collection_names:
+            query = {}
+            if category and category.lower() != "all":
+                query["category"] = category
+            if featured is not None:
+                query["is_featured"] = featured
+            
+            async for product in database.products.find(query).sort("order_index", 1):
+                products.append(product_helper(product))
+        return products
+    except Exception as e:
+        logger.error(f"Error fetching products: {e}")
+        return []
+
+
+@app.get("/api/products/categories")
+async def get_product_categories():
+    """Get all unique product categories"""
+    try:
+        collection_names = await database.list_collection_names()
+        if "products" in collection_names:
+            categories = await database.products.distinct("category")
+            return {"categories": sorted(categories)}
+        return {"categories": []}
+    except Exception as e:
+        logger.error(f"Error fetching categories: {e}")
+        return {"categories": []}
+
+
+@app.get("/api/products/{product_id}")
+async def get_product(product_id: str):
+    """Get a single product by ID"""
+    try:
+        if not ObjectId.is_valid(product_id):
+            raise HTTPException(status_code=400, detail="Invalid product ID")
+        
+        product = await database.products.find_one({"_id": ObjectId(product_id)})
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        return product_helper(product)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching product {product_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch product")
+
+
+
+
+
 # =============================================================================
 # DASHBOARD ROUTES
 # =============================================================================
+# @app.get("/admin/dashboard/stats")
+# async def get_dashboard_stats(current_user: dict = Depends(get_current_admin)):
+#     """Get dashboard statistics"""
+#     try:
+#         total_blogs = 0
+#         total_team_members = 0
+#         total_users = 0
+#         total_milestones = 0
+#         total_contacts = 0
+#         unread_contacts = 0
+        
+#         try:
+#             total_blogs = await database.blogs.count_documents({})
+#         except: pass
+        
+#         try:
+#             total_team_members = await database.team_members.count_documents({"is_active": True})
+#         except: pass
+        
+#         try:
+#             total_users = await database.users.count_documents({"is_active": True})
+#         except: pass
+        
+#         try:
+#             total_milestones = await database.milestones.count_documents({})
+#         except: pass
+        
+#         try:
+#             total_contacts = await database.contacts.count_documents({})
+#             unread_contacts = await database.contacts.count_documents({"is_read": False})
+#         except: pass
+        
+#         recent_activities = []
+        
+#         return {
+#             "total_blogs": total_blogs,
+#             "total_team_members": total_team_members,
+#             "total_users": total_users + 1,  # +1 for default admin
+#             "total_milestones": total_milestones,
+#             "total_contacts": total_contacts,
+#             "unread_contacts": unread_contacts,
+#             "recent_activities": recent_activities
+#         }
+        
+#     except Exception as e:
+#         logger.error(f"Error fetching dashboard stats: {e}")
+#         raise HTTPException(status_code=500, detail="Failed to fetch dashboard statistics")
+    
+
+
 @app.get("/admin/dashboard/stats")
-async def get_dashboard_stats(current_user: dict = Depends(get_current_admin)):
-    """Get dashboard statistics"""
+async def get_dashboard_stats(
+    current_user: dict = Depends(get_current_admin)
+):
+    """Get dashboard statistics including products"""
     try:
-        total_blogs = 0
-        total_team_members = 0
-        total_users = 0
-        total_milestones = 0
-        total_contacts = 0
-        unread_contacts = 0
+        # Get counts from all collections
+        total_blogs = await database.blogs.count_documents({})
+        total_team_members = await database.team_members.count_documents({})
+        total_users = await database.users.count_documents({})
+        total_milestones = await database.milestones.count_documents({})
+        total_contacts = await database.contacts.count_documents({})
         
-        try:
-            total_blogs = await database.blogs.count_documents({})
-        except: pass
+        # ✅ ADDED: Count products
+        total_products = await database.products.count_documents({})
         
-        try:
-            total_team_members = await database.team_members.count_documents({"is_active": True})
-        except: pass
+        # Count unread contacts
+        unread_contacts = await database.contacts.count_documents({"is_read": False})
         
-        try:
-            total_users = await database.users.count_documents({"is_active": True})
-        except: pass
-        
-        try:
-            total_milestones = await database.milestones.count_documents({})
-        except: pass
-        
-        try:
-            total_contacts = await database.contacts.count_documents({})
-            unread_contacts = await database.contacts.count_documents({"is_read": False})
-        except: pass
-        
+        # Get recent activities (last 10)
         recent_activities = []
+        
+        # Get recent blogs
+        async for blog in database.blogs.find().sort("created_at", -1).limit(3):
+            recent_activities.append({
+                "type": "blog",
+                "action": "Created",
+                "title": blog["title"],
+                "date": blog["created_at"].isoformat(),
+                "author": blog.get("author_name", "Admin")
+            })
+        
+        # Get recent team members
+        async for member in database.team_members.find().sort("created_at", -1).limit(2):
+            recent_activities.append({
+                "type": "team_member",
+                "action": "Added",
+                "title": member["name"],
+                "date": member["created_at"].isoformat(),
+                "author": "Admin"
+            })
+        
+        # ✅ ADDED: Get recent products
+        async for product in database.products.find().sort("created_at", -1).limit(2):
+            recent_activities.append({
+                "type": "product",
+                "action": "Added",
+                "title": product["name"],
+                "date": product["created_at"].isoformat(),
+                "author": "Admin"
+            })
+        
+        # Get recent milestones
+        async for milestone in database.milestones.find().sort("created_at", -1).limit(2):
+            recent_activities.append({
+                "type": "milestone",
+                "action": "Created",
+                "title": milestone["title"],
+                "date": milestone["created_at"].isoformat(),
+                "author": "Admin"
+            })
+        
+        # Sort all activities by date
+        recent_activities.sort(key=lambda x: x["date"], reverse=True)
+        recent_activities = recent_activities[:10]  # Keep only last 10
         
         return {
             "total_blogs": total_blogs,
             "total_team_members": total_team_members,
-            "total_users": total_users + 1,  # +1 for default admin
+            "total_users": total_users,
             "total_milestones": total_milestones,
             "total_contacts": total_contacts,
+            "total_products": total_products,  # ✅ ADDED
             "unread_contacts": unread_contacts,
             "recent_activities": recent_activities
         }
-        
     except Exception as e:
         logger.error(f"Error fetching dashboard stats: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch dashboard statistics")
+        raise HTTPException(status_code=500, detail="Failed to fetch dashboard stats")
+
 
 # =============================================================================
 # BLOG MANAGEMENT ROUTES
@@ -1530,7 +1695,6 @@ async def update_team_member(
     except Exception as e:
         logger.error(f"Error updating team member {member_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to update team member")
-
 @app.delete("/admin/team/{member_id}")
 async def delete_team_member(
     member_id: str,
@@ -1875,6 +2039,113 @@ async def delete_contact(
         logger.error(f"Error deleting contact {contact_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete contact")
 
+
+
+# ==============================================================================
+# ADMIN PRODUCT MANAGEMENT ENDPOINTS
+# ==============================================================================
+
+@app.get("/admin/products")
+async def get_admin_products(
+    current_user: dict = Depends(get_current_admin),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=100)
+):
+    """Get products for admin panel with pagination"""
+    try:
+        products = []
+        async for product in database.products.find().sort("created_at", -1).skip(skip).limit(limit):
+            products.append(product_helper(product))
+        return products
+    except Exception as e:
+        logger.error(f"Error fetching admin products: {e}")
+        return []
+
+
+@app.post("/admin/products")
+async def create_product(
+    product_data: ProductCreate,
+    current_user: dict = Depends(get_current_admin)
+):
+    """Create a new product"""
+    try:
+        product_dict = product_data.dict()
+        product_dict["created_at"] = datetime.now()
+        product_dict["updated_at"] = None
+        
+        result = await database.products.insert_one(product_dict)
+        new_product = await database.products.find_one({"_id": result.inserted_id})
+        
+        return product_helper(new_product)
+    except Exception as e:
+        logger.error(f"Error creating product: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to create product: {str(e)}")
+
+
+@app.put("/admin/products/{product_id}")
+async def update_product(
+    product_id: str,
+    product_data: ProductUpdate,
+    current_user: dict = Depends(get_current_admin)
+):
+    """Update a product"""
+    try:
+        if not ObjectId.is_valid(product_id):
+            raise HTTPException(status_code=400, detail="Invalid product ID")
+        
+        update_data = {k: v for k, v in product_data.dict().items() if v is not None}
+        
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No data to update")
+        
+        update_data["updated_at"] = datetime.now()
+        
+        result = await database.products.update_one(
+            {"_id": ObjectId(product_id)},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        updated_product = await database.products.find_one({"_id": ObjectId(product_id)})
+        return product_helper(updated_product)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating product {product_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update product")
+
+
+@app.delete("/admin/products/{product_id}")
+async def delete_product(
+    product_id: str,
+    current_user: dict = Depends(get_current_super_admin)
+):
+    """Delete a product"""
+    try:
+        if not ObjectId.is_valid(product_id):
+            raise HTTPException(status_code=400, detail="Invalid product ID")
+        
+        result = await database.products.delete_one({"_id": ObjectId(product_id)})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        return {"message": "Product deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting product {product_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete product")
+
+
+# Backend Update: Add Products to Dashboard Stats
+# Add this to your backend/app.py
+
+# Update your existing dashboard stats endpoint to include products count:
+
+
 # =============================================================================
 # HEALTH CHECK & REDIRECTS
 # =============================================================================
@@ -1906,15 +2177,15 @@ async def root():
         "version": "2.0.0",
         "admin_panel": "/admin",
         "api_docs": "/docs",
-        "status": "  All issues FIXED - Password, Auth, Milestones!"
+        "status": "✅ All issues FIXED - Password, Auth, Milestones!"
     }
 
 # Run application
 if __name__ == "__main__":
     import uvicorn
-    print(f"Admin Panel: http://localhost:8080/admin")
-    print(f"API Docs: http://localhost:{config.API_PORT}/docs") 
-    print(f"Default Login: admin / BioLabMate")
+    print(f"📊 Admin Panel: http://localhost:8080/admin")
+    print(f"🔗 API Docs: http://localhost:{config.API_PORT}/docs") 
+    print(f"🔑 Default Login: admin / BioLabMate")
     
     uvicorn.run(
         "app:app",
