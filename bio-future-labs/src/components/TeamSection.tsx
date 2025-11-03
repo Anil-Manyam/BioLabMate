@@ -752,7 +752,7 @@ import { Card } from '@/components/ui/card';
 import { Linkedin, Mail, X } from 'lucide-react';
 import Sanjay from '@/assets/Sanjay.jpg';
 import Sarika from '@/assets/Sarika.jpg';
-import Gordon from '@/assets/Gordon.jpg';
+import Gordon from '@/assets/gordon.jpg';
 import Vaibhav from '@/assets/Vaibhav.jpg';
 import Anil from '@/assets/Anil.jpg';
 import TeamBackground from '@/assets/Team_background.jpg';
@@ -801,14 +801,6 @@ const TeamSection = () => {
       linkedin: 'https://www.linkedin.com/in/anil-manyam-698662248/',
       email: 'anilmanyam.630@gmail.com'
     },
-    {
-      name: 'Vaibhav Thummar',
-      role: 'Software Engineer(Intern)',
-      bio: 'Software Developer at BioLabMate, creating impactful websites and software solutions while managing web content and digital development.',
-      image: Vaibhav,
-      linkedin: 'https://www.linkedin.com/in/vaibhav-thummar-951498249/',
-      email: 'vaibhav.it178@gmail.com'
-    }
   ];
 
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
