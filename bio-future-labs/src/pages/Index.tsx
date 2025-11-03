@@ -1,55 +1,55 @@
-import Navigation from '@/components/Navigation';
-import HeroSection from '@/components/HeroSection';
-import CircularJourneyTimeline from '@/components/CircularJourneyTimeline';
-import TeamSection from '@/components/TeamSection';
-import IncubatorPrograms from '@/components/IncubatorPrograms';
-import ContactSection from '@/components/ContactSection';
-import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { Calculator } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import CircularJourneyCarousel from '../components/CircularJourneyCarousel';
-const Index = () => {
-  const navigate = useNavigate();
+// import Navigation from '@/components/Navigation';
+// import HeroSection from '@/components/HeroSection';
+// import CircularJourneyTimeline from '@/components/CircularJourneyTimeline';
+// import TeamSection from '@/components/TeamSection';
+// import IncubatorPrograms from '@/components/IncubatorPrograms';
+// import ContactSection from '@/components/ContactSection';
+// import Footer from '@/components/Footer';
+// import { Button } from '@/components/ui/button';
+// import { Calculator } from 'lucide-react';
+// import { useNavigate } from 'react-router-dom';
+// import CircularJourneyCarousel from '../components/CircularJourneyCarousel';
+// const Index = () => {
+//   const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      <HeroSection />
-      <section className="py-0">
-        {/* <CircularJourneyTimeline /> */}
-        <CircularJourneyCarousel />
-      </section>
+//   return (
+//     <div className="min-h-screen bg-background">
+//       <Navigation />
+//       <HeroSection />
+//       <section className="py-0">
+//         {/* <CircularJourneyTimeline /> */}
+//         <CircularJourneyCarousel />
+//       </section>
       
-      {/* Sustainability Calculator Section */}
-      {/* <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-green-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            Calculate Your Lab's Environmental Impact
-          </h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Discover how much plastic waste your lab generates and learn about opportunities to reduce your environmental footprint with our comprehensive sustainability calculator.
-          </p>
-          <Button 
-            onClick={() => navigate('/sustainability-calculator')}
-            size="lg"
-            className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-          >
-            <Calculator className="w-5 h-5 mr-2" />
-            Sustainability Calculator
-          </Button>
-        </div>
-      </section>
-       */}
-      <TeamSection />
-      <IncubatorPrograms />
-      <ContactSection />
-      <Footer />
-    </div>
-  );
-};
+//       {/* Sustainability Calculator Section */}
+//       {/* <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-green-50">
+//         <div className="max-w-4xl mx-auto text-center">
+//           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+//             Calculate Your Lab's Environmental Impact
+//           </h2>
+//           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+//             Discover how much plastic waste your lab generates and learn about opportunities to reduce your environmental footprint with our comprehensive sustainability calculator.
+//           </p>
+//           <Button 
+//             onClick={() => navigate('/sustainability-calculator')}
+//             size="lg"
+//             className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+//           >
+//             <Calculator className="w-5 h-5 mr-2" />
+//             Sustainability Calculator
+//           </Button>
+//         </div>
+//       </section>
+//        */}
+//       <TeamSection />
+//       <IncubatorPrograms />
+//       <ContactSection />
+//       <Footer />
+//     </div>
+//   );
+// };
 
-export default Index;
+// export default Index;
 
 
 
@@ -219,112 +219,112 @@ export default Index;
 
 
 
-// // good transtion effect between sections
-// import { useNavigate } from 'react-router-dom';
-// import Navigation from '@/components/Navigation';
-// import HeroSection from '@/components/HeroSection';
-// import CircularJourneyCarousel from '@/components/CircularJourneyCarousel';
-// import TeamSection from '@/components/TeamSection';
-// import IncubatorPrograms from '@/components/IncubatorPrograms';
-// import ContactSection from '@/components/ContactSection';
-// import Footer from '@/components/Footer';
-// import { motion, useAnimation } from 'framer-motion';
-// import { useInView } from 'react-intersection-observer';
-// import { useEffect } from 'react';
+// good transtion effect between sections
+import { useNavigate } from 'react-router-dom';
+import Navigation from '@/components/Navigation';
+import HeroSection from '@/components/HeroSection';
+import CircularJourneyCarousel from '@/components/CircularJourneyCarousel';
+import TeamSection from '@/components/TeamSection';
+import IncubatorPrograms from '@/components/IncubatorPrograms';
+import ContactSection from '@/components/ContactSection';
+import Footer from '@/components/Footer';
+import { motion, useAnimation } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import { useEffect } from 'react';
 
-// /**
-//  * 🌟 AnimatedSection with parallax, rotation, and blur effects
-//  * Gives a cinematic scroll transition between each section
-//  */
-// const AnimatedSection = ({ children }: { children: React.ReactNode }) => {
-//   const controls = useAnimation();
-//   const [ref, inView] = useInView({
-//     threshold: 0.1,
-//     triggerOnce: false,
-//   });
+/**
+ * 🌟 AnimatedSection with parallax, rotation, and blur effects
+ * Gives a cinematic scroll transition between each section
+ */
+const AnimatedSection = ({ children }: { children: React.ReactNode }) => {
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    triggerOnce: false,
+  });
 
-//   useEffect(() => {
-//     if (inView) {
-//       controls.start({
-//         opacity: 1,
-//         y: 0,
-//         rotateX: 0,
-//         scale: 1,
-//         filter: 'blur(0px)',
-//         transition: {
-//           duration: 1,
-//           ease: [0.25, 0.1, 0.25, 1],
-//         },
-//       });
-//     } else {
-//       controls.start({
-//         opacity: 0,
-//         y: 120,
-//         rotateX: -10,
-//         scale: 0.98,
-//         filter: 'blur(6px)',
-//         transition: {
-//           duration: 1,
-//           ease: [0.25, 0.1, 0.25, 1],
-//         },
-//       });
-//     }
-//   }, [controls, inView]);
+  useEffect(() => {
+    if (inView) {
+      controls.start({
+        opacity: 1,
+        y: 0,
+        rotateX: 0,
+        scale: 1,
+        filter: 'blur(0px)',
+        transition: {
+          duration: 1,
+          ease: [0.25, 0.1, 0.25, 1],
+        },
+      });
+    } else {
+      controls.start({
+        opacity: 0,
+        y: 120,
+        rotateX: -10,
+        scale: 0.98,
+        filter: 'blur(6px)',
+        transition: {
+          duration: 1,
+          ease: [0.25, 0.1, 0.25, 1],
+        },
+      });
+    }
+  }, [controls, inView]);
 
-//   return (
-//     <motion.section
-//       ref={ref}
-//       initial={{ opacity: 0, y: 120, rotateX: -10, scale: 0.98, filter: 'blur(6px)' }}
-//       animate={controls}
-//       className="relative w-full will-change-transform"
-//       style={{
-//         transformOrigin: 'center top',
-//         perspective: 1000,
-//       }}
-//     >
-//       {children}
-//     </motion.section>
-//   );
-// };
+  return (
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0, y: 120, rotateX: -10, scale: 0.98, filter: 'blur(6px)' }}
+      animate={controls}
+      className="relative w-full will-change-transform"
+      style={{
+        transformOrigin: 'center top',
+        perspective: 1000,
+      }}
+    >
+      {children}
+    </motion.section>
+  );
+};
 
-// const Index = () => {
-//   const navigate = useNavigate();
+const Index = () => {
+  const navigate = useNavigate();
 
-//   return (
-//     <div className="min-h-screen bg-background overflow-x-hidden scroll-smooth">
-//       <Navigation />
+  return (
+    <div className="min-h-screen bg-background overflow-x-hidden scroll-smooth">
+      <Navigation />
 
-//       {/* Hero Section */}
-//       <AnimatedSection>
-//         <HeroSection />
-//       </AnimatedSection>
+      {/* Hero Section */}
+      <AnimatedSection>
+        <HeroSection />
+      </AnimatedSection>
 
-//       {/* Journey Section */}
-//       <AnimatedSection>
-//         <CircularJourneyCarousel />
-//       </AnimatedSection>
+      {/* Journey Section */}
+      <AnimatedSection>
+        <CircularJourneyCarousel />
+      </AnimatedSection>
 
-//       {/* Team Section */}
-//       <AnimatedSection>
-//         <TeamSection />
-//       </AnimatedSection>
+      {/* Team Section */}
+      <AnimatedSection>
+        <TeamSection />
+      </AnimatedSection>
 
-//       {/* Incubator Programs */}
-//       <AnimatedSection>
-//         <IncubatorPrograms />
-//       </AnimatedSection>
+      {/* Incubator Programs */}
+      <AnimatedSection>
+        <IncubatorPrograms />
+      </AnimatedSection>
 
-//       {/* Contact Section */}
-//       <AnimatedSection>
-//         <ContactSection />
-//       </AnimatedSection>
+      {/* Contact Section */}
+      <AnimatedSection>
+        <ContactSection />
+      </AnimatedSection>
 
-//       <Footer />
-//     </div>
-//   );
-// };
+      <Footer />
+    </div>
+  );
+};
 
-// export default Index;
+export default Index;
 
 
 
