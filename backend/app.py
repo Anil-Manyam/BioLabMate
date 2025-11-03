@@ -857,29 +857,86 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def authenticate_user(database, username: str, password: str):
-    """Authenticate user with default admin fallback"""
-    # Check for default admin first
-    if username == "admin" and password == "BioLabMate":
+# async def authenticate_user(database, username: str, password: str):
+#     """Authenticate user with default admin fallback"""
+#     # Check for default admin first
+#     if username == "admin" and password == "BioLabMate":
+#         return {
+#             "_id": "default_admin",
+#             "username": "admin",
+#             "email": "admin@biolabmate.com",
+#             "full_name": "Default Admin",
+#             "role": "super_admin",
+#             "is_active": True,
+#             "created_at": datetime.now()
+#         }
+    
+#     # Check database users
+#     try:
+#         user = await database.users.find_one({"username": username})
+#         if user and verify_password(password, user["password_hash"]):
+#             return user
+#     except Exception as e:
+#         logging.error(f"Database user check error: {e}")
+    
+#     return None
+
+
+# # for new users auth
+async def authenticate_user(database, username: str, password: str) -> Optional[dict]:
+    """Authenticate user against database"""
+    # First check if it's the default admin from config
+    if username == config.ADMIN_USERNAME and password == config.ADMIN_PASSWORD:
         return {
             "_id": "default_admin",
-            "username": "admin",
-            "email": "admin@biolabmate.com",
+            "username": config.ADMIN_USERNAME,
             "full_name": "Default Admin",
-            "role": "super_admin",
-            "is_active": True,
-            "created_at": datetime.now()
+            "role": UserRole.SUPER_ADMIN,
+            "email": "admin@biolabmate.com",
+            "is_active": True
         }
     
     # Check database users
-    try:
-        user = await database.users.find_one({"username": username})
-        if user and verify_password(password, user["password_hash"]):
-            return user
-    except Exception as e:
-        logging.error(f"Database user check error: {e}")
+    user = await database.users.find_one({"username": username, "is_active": True})
+    if not user:
+        return None
     
-    return None
+    # Handle both hashed and plain text passwords for migration
+    stored_password = user.get("password_hash", "")
+    
+    # If no password_hash, try old 'password' field
+    if not stored_password:
+        stored_password = user.get("password", "")
+    
+    # Check if password is hashed (starts with $2)
+    if stored_password.startswith("$2"):
+        # It's hashed, verify normally
+        try:
+            if not verify_password(password, stored_password):
+                return None
+        except Exception as e:
+            print(f"❌ Error verifying hashed password: {e}")
+            return None
+    else:
+        # It's plain text, compare directly and re-hash it
+        if password != stored_password:
+            return None
+        
+        # Re-hash and save for future logins
+        try:
+            hashed = get_password_hash(password)
+            await database.users.update_one(
+                {"_id": user["_id"]},
+                {
+                    "$set": {"password_hash": hashed},
+                    "$unset": {"password": ""}
+                }
+            )
+            print(f"✅ Password re-hashed for user: {username}")
+        except Exception as e:
+            print(f"⚠️  Could not re-hash password: {e}")
+    
+    return user
 
 # FIXED: Authentication dependency functions
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
