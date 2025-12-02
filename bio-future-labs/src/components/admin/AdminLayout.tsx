@@ -416,6 +416,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import Logo from '@/assets/Logo3.jpg';
 import {
   LayoutDashboard,
   Users,
@@ -426,7 +427,7 @@ import {
   Menu,
   X,
   AlertCircle,
-  Package,  // ✅ ADDED: Import Package icon for Products
+  Package,  
 } from 'lucide-react';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 
@@ -481,7 +482,7 @@ const AdminLayout: React.FC = () => {
     { path: '/admin/team', icon: Users, label: 'Team Members' },
     { path: '/admin/milestones', icon: Calendar, label: 'Journey' },
     { path: '/admin/blogs', icon: FileText, label: 'Blogs' },
-    { path: '/admin/products', icon: Package, label: 'Products' },  // ✅ ADDED THIS LINE
+    { path: '/admin/products', icon: Package, label: 'Products' },  
     { path: '/admin/users', icon: Users, label: 'Users' },
     { path: '/admin/contacts', icon: Mail, label: 'Contacts' },
   ];
@@ -517,10 +518,10 @@ const AdminLayout: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center justify-between p-4 border-b border-gray-800">
             <Link to="/admin" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">B</span>
+              <div className="flex items-center gap-1">
+                <img src={Logo} alt="Company Logo" className="h-9 w-auto" />
               </div>
-              <span className="text-white font-bold text-xl">BioLabMate</span>
+              <span className="text-white font-bold text-xl">BIOLABMATE</span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}

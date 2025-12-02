@@ -1,5 +1,5 @@
 import { Github, Linkedin, Twitter } from 'lucide-react';
-import Logo from '@/assets/Logo1.jpg';
+import Logo from '@/assets/Logo3.jpg';
 
 const Footer = () => {
   return (
@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <img src={Logo} alt="Company Logo" className="h-6 w-auto" />
-              <span className="text-2xl font-bold">BioLabMate</span>
+              <span className="text-2xl font-bold">BIOLABMATE</span>
             </div>
             <p className="text-background/80 mb-6 max-w-md">
               Pioneering sustainable materials through innovative seaweed-based biodegradable solutions for a cleaner tomorrow.

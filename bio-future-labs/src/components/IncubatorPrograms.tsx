@@ -151,12 +151,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Award, Star, Sparkles, TrendingUp } from 'lucide-react';
 import Image1 from '@/assets/Bioenterprise_logo.png';
 import Image2 from '@/assets/Emera_ideahub_logo.png';
-import Image3 from '@/assets/Foresight_logo.png';
-import Image4 from '@/assets/Genesis_logo.png';
+import Image3 from '@/assets/Dalhousie.png';
+import Image4 from '@/assets/Memorial.png';
 import Image5 from '@/assets/Lab2Market_Logo.png';
 import Image6 from '@/assets/NRC_canada.png';
 import Image7 from '@/assets/ocean_startup_project_logo_.png';
-
+import Image8 from '@/assets/invest.png';
 const IncubatorPrograms = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -167,11 +167,12 @@ const IncubatorPrograms = () => {
   const logos = [
     { src: Image1, alt: 'Bioenterprise', name: 'Bioenterprise' },
     { src: Image2, alt: 'Emera IdeaHub', name: 'Emera IdeaHub' },
-    { src: Image3, alt: 'Foresight', name: 'Foresight' },
-    { src: Image4, alt: 'Genesis', name: 'Genesis' },
+    { src: Image3, alt: 'Dalhousie', name: 'Dalhousie University' },
+    { src: Image4, alt: 'Memorial', name: 'Memorial Universisty' },
     { src: Image5, alt: 'Lab2Market', name: 'Lab2Market' },
     { src: Image6, alt: 'NRC Canada', name: 'NRC Canada' },
     { src: Image7, alt: 'Ocean Startup Project', name: 'Ocean Startup Project' },
+    { src: Image8, alt: 'invest', name: 'Invest Novia Scotia' },
   ];
 
   useEffect(() => {
