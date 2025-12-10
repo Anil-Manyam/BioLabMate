@@ -4,7 +4,7 @@ import { Quote, Users, Leaf, Lightbulb, Award, Target, Eye, Trophy, Globe, Heart
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import biolabmateImage from '@/assets/biolabmate.jpg';
-import sanjayImage from '@/assets/sanjay.jpg';
+import sanjayImage from '@/assets/Sanjay.jpg';
 import sarikaImage from '@/assets/sarika.jpg';
 import bothCoFounders from '@/assets/both.jpg';
 import awardImage from '@/assets/award.jpg';
