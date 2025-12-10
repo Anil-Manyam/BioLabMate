@@ -402,6 +402,8 @@ async def lifespan(app: FastAPI):
 
 
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(
     title="BioLabMate Unified Admin API",
     description="Enhanced backend API for BioLabMate with unified admin panel",
@@ -411,11 +413,19 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "http://localhost:3000", "http://localhost:5173", "http://localhost:8000"],
+    allow_origins=[
+        "http://localhost:8080",
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8000",
+        "https://bio-lab-mate.vercel.app",          # vercel url
+    ],
+    allow_origin_regex=r"https://bio-lab-mate-.*\.vercel\.app",  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 def blog_helper(blog) -> dict:
