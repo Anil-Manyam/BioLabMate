@@ -74,8 +74,6 @@ const ServiceDropdown: React.FC<ServiceDropdownProps> = ({ isOpen, onClose, trig
 
   const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;
-
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -202,8 +200,6 @@ const ServiceDropdown: React.FC<ServiceDropdownProps> = ({ isOpen, onClose, trig
       { name: 'Burned', value: wastePercentages.burn, color: '#f59e0b' },
       { name: 'Total Plastic Waste', value: remainingPercentage, color: '#8b5cf6' }
     ];
-    
-    // Filter out zero values to avoid overlapping labels
     return data.filter(item => item.value > 0);
   };
 
@@ -211,8 +207,6 @@ const ServiceDropdown: React.FC<ServiceDropdownProps> = ({ isOpen, onClose, trig
     const totalWeight = calculateTotalWeight();
     const totalCarbonEmissions = calculateTotalCarbonEmissions();
     const remainingPercentage = calculateRemainingPercentage();
-
-    // Create a temporary div for the report
     const reportDiv = document.createElement('div');
     reportDiv.style.position = 'absolute';
     reportDiv.style.left = '-9999px';
@@ -223,8 +217,6 @@ const ServiceDropdown: React.FC<ServiceDropdownProps> = ({ isOpen, onClose, trig
     reportDiv.style.fontFamily = 'Arial, sans-serif';
     reportDiv.style.color = '#333';
     reportDiv.style.lineHeight = '1.6';
-
-    // Create the report content
     reportDiv.innerHTML = `
       <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3b82f6; padding-bottom: 20px;">
         <div style="font-size: 24px; font-weight: bold; color: #3b82f6; margin-bottom: 5px;">BioLabMate</div>
@@ -341,11 +333,9 @@ const ServiceDropdown: React.FC<ServiceDropdownProps> = ({ isOpen, onClose, trig
       </div>
     `;
 
-    // Add the report div to the document
     document.body.appendChild(reportDiv);
 
     try {
-      // Capture the report as canvas
       const canvas = await html2canvas(reportDiv, {
         scale: 2,
         useCORS: true,
@@ -353,7 +343,6 @@ const ServiceDropdown: React.FC<ServiceDropdownProps> = ({ isOpen, onClose, trig
         backgroundColor: '#ffffff'
       });
 
-      // Create PDF
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 210;

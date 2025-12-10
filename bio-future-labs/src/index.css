@@ -2,13 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* BioLabMate Design System - Light, Clean, Professional Theme
-All colors MUST be HSL.
-*/
 
 @layer base {
   :root {
-    /* Eco-friendly sage/mint white theme */
+
     --background: 145 35% 97%;
     --foreground: 145 30% 18%;
 
