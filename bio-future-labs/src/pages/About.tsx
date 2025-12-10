@@ -5,7 +5,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import biolabmateImage from '@/assets/biolabmate.jpg';
 import sanjayImage from '@/assets/Sanjay.jpg';
-import sarikaImage from '@/assets/sarika.jpg';
+import sarikaImage from '@/assets/Sarika.jpg';
 import bothCoFounders from '@/assets/both.jpg';
 import awardImage from '@/assets/award.jpg';
 
