@@ -57,7 +57,7 @@ const AdminLogin: React.FC = () => {
         
           <div className="text-center mb-8">
             <img 
-              src="/src/assets/Logo.jpg" 
+              src="@/src/assets/Logo.jpg" 
               alt="BioLabMate" 
               className="h-12 w-auto mx-auto mb-4"
             />
